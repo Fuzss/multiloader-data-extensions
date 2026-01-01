@@ -8,7 +8,7 @@ package net.neoforged.neoforge.registries;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.neoforged.neoforge.registries.datamaps.DataMapType;
-import org.jspecify.annotations.Nullable;
+import net.neoforged.neoforge.registries.datamaps.ILookupWithData;
 
 import java.util.Map;
 
@@ -18,18 +18,7 @@ import java.util.Map;
  *
  * @param <T> the type of registry entries
  */
-public interface IRegistryExtension<T> {
-
-    /**
-     * {@return the data map value attached with the object with the key, or {@code null} if there's no attached value}
-     *
-     * @param type the type of the data map
-     * @param key  the object to get the value for
-     * @param <A>  the data type
-     */
-    @Nullable default <A> A neoforgedatapackextensions$getData(DataMapType<T, A> type, ResourceKey<T> key) {
-        throw new UnsupportedOperationException();
-    }
+public interface IRegistryExtension<T> extends ILookupWithData<T> {
 
     /**
      * {@return the data map of the given {@code type}}
@@ -37,6 +26,6 @@ public interface IRegistryExtension<T> {
      * @param <A> the data type
      */
     default <A> Map<ResourceKey<T>, A> neoforgedatapackextensions$getDataMap(DataMapType<T, A> type) {
-        throw new UnsupportedOperationException();
+        return Map.of();
     }
 }

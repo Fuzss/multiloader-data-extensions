@@ -13,7 +13,6 @@ import org.jspecify.annotations.Nullable;
  * @param <R> the type of the object
  */
 public interface IWithData<R> {
-
     /**
      * {@return the data of the given type that is attached to this object, or {@code null} if one isn't}
      *

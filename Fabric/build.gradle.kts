@@ -28,7 +28,6 @@ multiloader {
             "HolderLookup\$RegistryLookup\$DelegateFabricMixin",
             "HolderLookup\$RegistryLookupFabricMixin",
             "Holder\$ReferenceFabricMixin",
-            "MappedRegistry\$LookupFabricMixin",
             "MappedRegistryFabricMixin",
             "RegistryFabricMixin",
             "ReloadableServerResourcesFabricMixin",

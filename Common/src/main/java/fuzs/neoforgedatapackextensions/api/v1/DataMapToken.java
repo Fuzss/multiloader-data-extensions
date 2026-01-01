@@ -2,11 +2,14 @@ package fuzs.neoforgedatapackextensions.api.v1;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
 
+/**
+ * TODO move this to {@code api.v2}
+ */
 @ApiStatus.NonExtendable
 public interface DataMapToken<R, T> {
 
