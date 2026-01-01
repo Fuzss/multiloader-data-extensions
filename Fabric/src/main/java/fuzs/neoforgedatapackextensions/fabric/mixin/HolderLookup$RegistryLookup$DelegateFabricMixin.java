@@ -15,7 +15,7 @@ interface HolderLookup$RegistryLookup$DelegateFabricMixin<T> extends HolderLooku
     RegistryLookup<T> parent();
 
     @Override
-    default <A> @Nullable A neoforgedatapackextensions$getData(DataMapType<T, A> attachment, ResourceKey<T> key) {
-        return ((ILookupWithData<T>) this.parent()).neoforgedatapackextensions$getData(attachment, key);
+    default <A> @Nullable A neoforgedatapackextensions$getData(DataMapType<T, A> type, ResourceKey<T> key) {
+        return ((ILookupWithData<T>) this.parent()).neoforgedatapackextensions$getData(type, key);
     }
 }
