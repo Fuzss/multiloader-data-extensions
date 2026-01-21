@@ -20,7 +20,7 @@ import java.util.Optional;
 
 public record DataMapFile<T, R>(
         boolean replace,
-        Map<Either<TagKey<R>, ResourceKey<R>>, Optional<DataMapEntry<T>>> values,
+        Map<Either<TagKey<R>, ResourceKey<R>>, DataMapEntry<T>> values,
         List<DataMapEntry.Removal<T, R>> removals) {
     public static <T, R> Codec<DataMapFile<T, R>> codec(ResourceKey<Registry<R>> registryKey, DataMapType<R, T> dataMap) {
         final Codec<Either<TagKey<R>, ResourceKey<R>>> tagOrValue = ExtraCodecs.TAG_OR_ELEMENT_ID.xmap(
@@ -45,7 +45,7 @@ public record DataMapFile<T, R>(
 
         return RecordCodecBuilder.create(in -> in.group(
                 Codec.BOOL.optionalFieldOf("replace", false).forGetter(DataMapFile::replace),
-                ExtraCodecs.strictUnboundedMap(tagOrValue, ExtraCodecs.optionalEmptyMap(DataMapEntry.codec(dataMap))).fieldOf("values").forGetter(DataMapFile::values),
+                ExtraCodecs.strictUnboundedMap(tagOrValue, DataMapEntry.codec(dataMap)).fieldOf("values").forGetter(DataMapFile::values),
                 removalsCodec.optionalFieldOf("remove", List.of()).forGetter(DataMapFile::removals))
                 .apply(in, DataMapFile::new));
     }

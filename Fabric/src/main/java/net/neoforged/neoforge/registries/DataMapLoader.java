@@ -84,10 +84,8 @@ public class DataMapLoader implements PreparableReloadListener {
             }
 
             entry.values().forEach((tKey, value) -> {
-                if (value.isEmpty()) return;
-
                 resolve(registry, tKey, true, holder -> {
-                    final var newValue = value.get();
+                    final var newValue = value;
                     final var key = holder.unwrapKey().orElse(null);
                     final var oldValue = result.get(key);
                     if (oldValue == null || newValue.replace()) {

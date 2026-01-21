@@ -93,7 +93,7 @@ public abstract class DataMapProvider implements DataProvider {
     }
 
     public static class Builder<T, R> {
-        private final Map<Either<TagKey<R>, ResourceKey<R>>, Optional<DataMapEntry<T>>> values = new LinkedHashMap<>();
+        private final Map<Either<TagKey<R>, ResourceKey<R>>, DataMapEntry<T>> values = new LinkedHashMap<>();
         protected final List<DataMapEntry.Removal<T, R>> removals = new ArrayList<>();
         protected final ResourceKey<Registry<R>> registryKey;
         private final DataMapType<R, T> type;
@@ -106,7 +106,7 @@ public abstract class DataMapProvider implements DataProvider {
         }
 
         public Builder<T, R> add(ResourceKey<R> key, T value, boolean replace) {
-            this.values.put(Either.right(key), Optional.of(new DataMapEntry<>(value, replace)));
+            this.values.put(Either.right(key), new DataMapEntry<>(value, replace));
             return this;
         }
 
@@ -119,7 +119,7 @@ public abstract class DataMapProvider implements DataProvider {
         }
 
         public Builder<T, R> add(TagKey<R> tag, T value, boolean replace) {
-            this.values.put(Either.left(tag), Optional.of(new DataMapEntry<>(value, replace)));
+            this.values.put(Either.left(tag), new DataMapEntry<>(value, replace));
             return this;
         }
 
