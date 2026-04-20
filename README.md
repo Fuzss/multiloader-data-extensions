@@ -1,22 +1,32 @@
-# NeoForge Data Pack Extensions
+# Multiloader Data Extensions
 
-A Minecraft mod. Downloads can be found on [CurseForge](https://www.curseforge.com/members/fuzs_/projects) and [Modrinth](https://modrinth.com/user/Fuzs).
+### Minecraft 26.x
 
-![](https://raw.githubusercontent.com/Fuzss/modresources/main/pages/data/neoforgedatapackextensions/banner.png)
+| Branch | Status | Changelog |
+| --- | --- | --- |
+| [26.1.x](https://github.com/Fuzss/multiloader-data-extensions/tree/26.1.x) | ✅&nbsp;Primary | [CHANGELOG.md](https://github.com/Fuzss/multiloader-data-extensions/blob/26.1.x/CHANGELOG.md) |
 
-## About the project
-NeoForge Data Pack Extensions brings some very useful additions to Minecraft's [data packs](https://minecraft.wiki/w/Data_pack) introduced by the [NeoForge](https://neoforged.net/) mod loader to other modding ecosystems, mainly the [Fabric](https://fabricmc.net/) loader.
+### Minecraft 1.21.x
 
-Most notably this includes a full fletched port of [data maps](https://docs.neoforged.net/docs/resources/server/datamaps/), as well as the ability to remove entries from [tags](https://docs.neoforged.net/docs/resources/server/tags).
+| Branch | Status | Changelog |
+| --- | --- | --- |
+| [1.21.11](https://github.com/Fuzss/multiloader-data-extensions/tree/1.21.11) | ❌&nbsp;Archived | [CHANGELOG.md](https://github.com/Fuzss/multiloader-data-extensions/blob/1.21.11/CHANGELOG.md) |
 
-## Data maps
-A comprehensive guide to data maps is available via the [NeoForge wiki](https://docs.neoforged.net/docs/resources/server/datamaps/).
+| Branch | Status | Changelog | Downloads |
+| --- | --- | --- | --- |
+| [1.21.10](https://github.com/Fuzss/multiloader-data-extensions/tree/1.21.10) | ❌&nbsp;Archived | [CHANGELOG.md](https://github.com/Fuzss/multiloader-data-extensions/blob/1.21.10/CHANGELOG.md) | <img src="https://cdn.simpleicons.org/curseforge" width="14" />&nbsp;[CurseForge](https://www.curseforge.com/members/fuzs_/projects)<br /><img src="https://cdn.simpleicons.org/modrinth" width="14" />&nbsp;[Modrinth](https://modrinth.com/user/Fuzs) |
+| [1.21.8](https://github.com/Fuzss/multiloader-data-extensions/tree/1.21.8) | ❌&nbsp;Archived | [CHANGELOG.md](https://github.com/Fuzss/multiloader-data-extensions/blob/1.21.8/CHANGELOG.md) | <img src="https://cdn.simpleicons.org/curseforge" width="14" />&nbsp;[CurseForge](https://www.curseforge.com/members/fuzs_/projects)<br /><img src="https://cdn.simpleicons.org/modrinth" width="14" />&nbsp;[Modrinth](https://modrinth.com/user/Fuzs) |
+| [1.21.5](https://github.com/Fuzss/multiloader-data-extensions/tree/1.21.5) | ❌&nbsp;Archived | [CHANGELOG.md](https://github.com/Fuzss/multiloader-data-extensions/blob/1.21.5/CHANGELOG.md) | <img src="https://cdn.simpleicons.org/curseforge" width="14" />&nbsp;[CurseForge](https://www.curseforge.com/members/fuzs_/projects)<br /><img src="https://cdn.simpleicons.org/modrinth" width="14" />&nbsp;[Modrinth](https://modrinth.com/user/Fuzs) |
+| [1.21.4](https://github.com/Fuzss/multiloader-data-extensions/tree/1.21.4) | ❌&nbsp;Archived | [CHANGELOG.md](https://github.com/Fuzss/multiloader-data-extensions/blob/1.21.4/CHANGELOG.md) | <img src="https://cdn.simpleicons.org/curseforge" width="14" />&nbsp;[CurseForge](https://www.curseforge.com/members/fuzs_/projects)<br /><img src="https://cdn.simpleicons.org/modrinth" width="14" />&nbsp;[Modrinth](https://modrinth.com/user/Fuzs) |
+| [1.21.3](https://github.com/Fuzss/multiloader-data-extensions/tree/1.21.3) | ❌&nbsp;Archived | [CHANGELOG.md](https://github.com/Fuzss/multiloader-data-extensions/blob/1.21.3/CHANGELOG.md) | <img src="https://cdn.simpleicons.org/curseforge" width="14" />&nbsp;[CurseForge](https://www.curseforge.com/members/fuzs_/projects)<br /><img src="https://cdn.simpleicons.org/modrinth" width="14" />&nbsp;[Modrinth](https://modrinth.com/user/Fuzs) |
+| [1.21.1](https://github.com/Fuzss/multiloader-data-extensions/tree/1.21.1) | ✅&nbsp;Maintained | [CHANGELOG.md](https://github.com/Fuzss/multiloader-data-extensions/blob/1.21.1/CHANGELOG.md) | <img src="https://cdn.simpleicons.org/curseforge" width="14" />&nbsp;[CurseForge](https://www.curseforge.com/members/fuzs_/projects)<br /><img src="https://cdn.simpleicons.org/modrinth" width="14" />&nbsp;[Modrinth](https://modrinth.com/user/Fuzs) |
 
-New data maps should be registered on Fabric in `ModInitializer::onInitialize` via `RegistryManager::registerDataMap` as opposed to `RegisterDataMapTypesEvent` on NeoForge.
+---
 
-Also NeoForge's `DataMapsUpdatedEvent` is implemented in an adapted form as `DataMapsUpdatedCallback`.
+**✅&nbsp;Primary** — Latest version with active development and new features
 
-## Tags removals
-A comprehensive guide to tags on NeoForge is once again available via the [wiki](https://docs.neoforged.net/docs/resources/server/tags).
+**✅&nbsp;Maintained** — Receives backports and selected new features
 
-An additional optional field `remove` is added to tag defintions, following the same format as vanilla's `values` field. Included values are removed from all subsequent tag files for this tag without having to override the whole file via `replace`.
+**⚠️&nbsp;Bugfixes&nbsp;only** — Critical fixes and crash fixes only
+
+**❌&nbsp;Archived** — No longer updated
