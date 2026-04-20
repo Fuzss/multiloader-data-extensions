@@ -1,9 +1,10 @@
 {
+    "minecraft": "26.1.2",
     "mod": {
         "id": "neoforgedatapackextensions",
         "group": "fuzs.neoforgedatapackextensions",
         "name": "NeoForge Data Pack Extensions",
-        "version": "21.11.3",
+        "version": "26.1.0",
         "authors": [
             "Fuzs"
         ],
@@ -22,7 +23,7 @@
     "links": [
         {
             "name": "github",
-            "slug": "neoforgedatapackextensions"
+            "slug": "multiloader-data-extensions"
         }
     ],
     "environments": {
