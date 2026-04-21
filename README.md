@@ -4,7 +4,7 @@
 
 | Branch | Status | Changelog | Maven |
 | --- | --- | --- | --- |
-| [26.1.x](https://github.com/Fuzss/multiloader-data-extensions/tree/26.1.x) | ✅&nbsp;Primary | [CHANGELOG.md](https://github.com/Fuzss/multiloader-data-extensions/blob/26.1.x/CHANGELOG.md) | [`fuzs.neoforgedatapackextensions:neoforgedatapackextensions-common:26.1.0`](https://github.com/Fuzss/modresources/tree/main/maven/fuzs/neoforgedatapackextensions/neoforgedatapackextensions-common/26.1.0)<br />[`fuzs.neoforgedatapackextensions:neoforgedatapackextensions-fabric:26.1.0`](https://github.com/Fuzss/modresources/tree/main/maven/fuzs/neoforgedatapackextensions/neoforgedatapackextensions-fabric/26.1.0)<br />[`fuzs.neoforgedatapackextensions:neoforgedatapackextensions-neoforge:26.1.0`](https://github.com/Fuzss/modresources/tree/main/maven/fuzs/neoforgedatapackextensions/neoforgedatapackextensions-neoforge/26.1.0) |
+| [26.1.x](https://github.com/Fuzss/multiloader-data-extensions/tree/26.1.x) | ✅&nbsp;Primary | [CHANGELOG.md](https://github.com/Fuzss/multiloader-data-extensions/blob/26.1.x/CHANGELOG.md) | [`fuzs.multiloaderdataextensions:multiloaderdataextensions-common:26.1.0`](https://github.com/Fuzss/modresources/tree/main/maven/fuzs/multiloaderdataextensions/multiloaderdataextensions-common/26.1.0)<br />[`fuzs.multiloaderdataextensions:multiloaderdataextensions-fabric:26.1.0`](https://github.com/Fuzss/modresources/tree/main/maven/fuzs/multiloaderdataextensions/multiloaderdataextensions-fabric/26.1.0)<br />[`fuzs.multiloaderdataextensions:multiloaderdataextensions-neoforge:26.1.0`](https://github.com/Fuzss/modresources/tree/main/maven/fuzs/multiloaderdataextensions/multiloaderdataextensions-neoforge/26.1.0) |
 
 ### Minecraft 1.21.x
 
