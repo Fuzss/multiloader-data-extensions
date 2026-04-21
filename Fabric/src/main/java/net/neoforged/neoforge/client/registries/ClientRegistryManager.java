@@ -7,8 +7,8 @@ package net.neoforged.neoforge.client.registries;
 
 import com.google.common.collect.Sets;
 import com.mojang.logging.LogUtils;
-import fuzs.neoforgedatapackextensions.fabric.api.v1.DataMapsUpdatedCallback;
-import fuzs.neoforgedatapackextensions.fabric.impl.registries.datamaps.IRegistryWithData;
+import fuzs.multiloaderdataextensions.fabric.api.v2.DataMapsUpdatedCallback;
+import fuzs.multiloaderdataextensions.fabric.impl.registries.datamaps.IRegistryWithData;
 import net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.ChatFormatting;

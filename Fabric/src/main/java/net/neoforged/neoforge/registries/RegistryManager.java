@@ -5,13 +5,13 @@
 
 package net.neoforged.neoforge.registries;
 
-import fuzs.neoforgedatapackextensions.impl.NeoForgeDataPackExtensions;
+import fuzs.multiloaderdataextensions.common.impl.MultiloaderDataExtensions;
 import io.netty.util.AttributeKey;
 import net.fabricmc.fabric.api.networking.v1.ServerConfigurationNetworking;
 import net.minecraft.core.Registry;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.RegistryDataLoader;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.network.configuration.RegistryDataMapNegotiation;
 import net.neoforged.neoforge.network.payload.KnownRegistryDataMapsReplyPayload;
 import net.neoforged.neoforge.registries.datamaps.DataMapType;
@@ -70,14 +70,14 @@ public class RegistryManager {
     }
 
     public static final AttributeKey<Map<ResourceKey<? extends Registry<?>>, Collection<Identifier>>> ATTRIBUTE_KNOWN_DATA_MAPS = AttributeKey.valueOf(
-            NeoForgeDataPackExtensions.id("known_data_maps").toString());
+            MultiloaderDataExtensions.id("known_data_maps").toString());
 
     @ApiStatus.Internal
     public static void handleKnownDataMapsReply(final KnownRegistryDataMapsReplyPayload payload, final ServerConfigurationNetworking.Context context) {
-        context.networkHandler().connection.channel.pipeline()
+        context.packetListener().connection.channel.pipeline()
                 .lastContext()
                 .attr(ATTRIBUTE_KNOWN_DATA_MAPS)
                 .set(payload.dataMaps());
-        context.networkHandler().completeTask(RegistryDataMapNegotiation.TYPE);
+        context.packetListener().completeTask(RegistryDataMapNegotiation.TYPE);
     }
 }

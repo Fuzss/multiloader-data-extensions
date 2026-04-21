@@ -1,9 +1,9 @@
 {
     "minecraft": "26.1.2",
     "mod": {
-        "id": "neoforgedatapackextensions",
-        "group": "fuzs.neoforgedatapackextensions",
-        "name": "NeoForge Data Pack Extensions",
+        "id": "multiloaderdataextensions",
+        "group": "fuzs.multiloaderdataextensions",
+        "name": "Multiloader Data Extensions",
         "version": "26.1.0",
         "authors": [
             "Fuzs"

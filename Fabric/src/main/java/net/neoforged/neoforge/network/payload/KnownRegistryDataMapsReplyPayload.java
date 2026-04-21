@@ -6,7 +6,7 @@
 package net.neoforged.neoforge.network.payload;
 
 import com.google.common.collect.Maps;
-import fuzs.neoforgedatapackextensions.impl.NeoForgeDataPackExtensions;
+import fuzs.multiloaderdataextensions.common.impl.MultiloaderDataExtensions;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -24,7 +24,7 @@ import java.util.Map;
 public record KnownRegistryDataMapsReplyPayload(
         Map<ResourceKey<? extends Registry<?>>, Collection<Identifier>> dataMaps) implements CustomPacketPayload {
     public static final Type<KnownRegistryDataMapsReplyPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(
-            NeoForgeDataPackExtensions.MOD_ID, "known_registry_data_maps_reply"));
+            MultiloaderDataExtensions.MOD_ID, "known_registry_data_maps_reply"));
     public static final StreamCodec<FriendlyByteBuf, KnownRegistryDataMapsReplyPayload> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.map(
                     Maps::newHashMapWithExpectedSize,

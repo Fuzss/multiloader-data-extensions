@@ -5,15 +5,15 @@
 
 package net.neoforged.neoforge.network.configuration;
 
-import fuzs.neoforgedatapackextensions.impl.NeoForgeDataPackExtensions;
+import fuzs.multiloaderdataextensions.common.impl.MultiloaderDataExtensions;
 import net.fabricmc.fabric.api.networking.v1.ServerConfigurationNetworking;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.network.ConfigurationTask;
 import net.minecraft.server.network.ServerConfigurationPacketListenerImpl;
 import net.neoforged.neoforge.network.payload.KnownRegistryDataMapsPayload;
@@ -29,12 +29,12 @@ import java.util.function.Consumer;
 
 @ApiStatus.Internal
 public record RegistryDataMapNegotiation(ServerConfigurationPacketListenerImpl listener) implements ConfigurationTask {
-    public static final Identifier ID = Identifier.fromNamespaceAndPath(NeoForgeDataPackExtensions.MOD_ID, "registry_data_map_negotiation");
+    public static final Identifier ID = Identifier.fromNamespaceAndPath(MultiloaderDataExtensions.MOD_ID, "registry_data_map_negotiation");
     public static final Type TYPE = new Type(ID.toString());
 
     @Override
     public void start(Consumer<Packet<?>> task) {
-        this.run(customPacketPayload -> task.accept(ServerConfigurationNetworking.createS2CPacket(customPacketPayload)));
+        this.run(customPacketPayload -> task.accept(ServerConfigurationNetworking.createClientboundPacket(customPacketPayload)));
     }
 
     @Override
