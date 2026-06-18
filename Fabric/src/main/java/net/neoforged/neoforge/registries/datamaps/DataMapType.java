@@ -8,8 +8,8 @@ package net.neoforged.neoforge.registries.datamaps;
 import com.google.common.base.Preconditions;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
@@ -23,8 +23,8 @@ import java.util.Objects;
  * }</pre>
  *
  * <p>
- * The {@code registry namespace} is omitted if it is {@value Identifier#DEFAULT_NAMESPACE}. <br> The structure of
- * the json file is as follows:
+ * The {@code registry namespace} is omitted if it is {@value Identifier#DEFAULT_NAMESPACE}. <br> The structure of the
+ * json file is as follows:
  *
  * <pre>
  * <code>
@@ -52,10 +52,9 @@ import java.util.Objects;
  *
  * <p>
  * You can access a data map using
- * {@link net.neoforged.neoforge.registries.IRegistryExtension#neoforgedatapackextensions$getDataMap(DataMapType)} and
- * {@link IWithData#neoforgedatapackextensions$getData(DataMapType)}. <br> You can usually go through
- * {@linkplain net.minecraft.core.Holder Holder} implementations in
- * order to get the data of an object directly.
+ * {@link net.neoforged.neoforge.registries.IRegistryExtension#multiloaderdataextensions$getDataMap(DataMapType)} and
+ * {@link IWithData#multiloaderdataextensions$getData(DataMapType)}. <br> You can usually go through
+ * {@linkplain net.minecraft.core.Holder Holder} implementations in order to get the data of an object directly.
  *
  * @see AdvancedDataMapType for more functionality
  */

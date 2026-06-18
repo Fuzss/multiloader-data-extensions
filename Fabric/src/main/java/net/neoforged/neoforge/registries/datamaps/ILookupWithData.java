@@ -11,7 +11,7 @@ public interface ILookupWithData<T> {
      * @param key  the object to get the value for
      * @param <A>  the data type
      */
-    default <A> @Nullable A neoforgedatapackextensions$getData(DataMapType<T, A> type, ResourceKey<T> key) {
+    default <A> @Nullable A multiloaderdataextensions$getData(DataMapType<T, A> type, ResourceKey<T> key) {
         return null;
     }
 }

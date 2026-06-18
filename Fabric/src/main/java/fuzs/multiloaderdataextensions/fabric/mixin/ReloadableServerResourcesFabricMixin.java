@@ -11,8 +11,8 @@ abstract class ReloadableServerResourcesFabricMixin {
 
     @ModifyVariable(method = "lambda$loadResources$2(Lnet/minecraft/server/ReloadableServerRegistries$LoadResult;Lnet/minecraft/world/flag/FeatureFlagSet;Lnet/minecraft/commands/Commands$CommandSelection;Ljava/util/List;Lnet/minecraft/server/permissions/PermissionSet;Lnet/minecraft/server/packs/resources/ResourceManager;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;Ljava/util/List;)Ljava/util/concurrent/CompletionStage;",
                     at = @At(value = "STORE", ordinal = 0))
-    private static ReloadableServerResources loadResources(ReloadableServerResources reloadableServerResources) {
-        MultiloaderDataExtensionsFabric.setReloadableServerResources(reloadableServerResources);
-        return reloadableServerResources;
+    private static ReloadableServerResources loadResources(ReloadableServerResources result) {
+        MultiloaderDataExtensionsFabric.setReloadableServerResources(result);
+        return result;
     }
 }

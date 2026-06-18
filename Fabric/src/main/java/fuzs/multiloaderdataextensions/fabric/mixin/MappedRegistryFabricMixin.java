@@ -15,21 +15,21 @@ import java.util.Map;
 @Mixin(MappedRegistry.class)
 abstract class MappedRegistryFabricMixin<T> implements IRegistryExtension<T>, IRegistryWithData<T> {
     @Unique
-    final Map<DataMapType<T, ?>, Map<ResourceKey<T>, ?>> neoforgedatapackextensions$dataMaps = new IdentityHashMap<>();
+    final Map<DataMapType<T, ?>, Map<ResourceKey<T>, ?>> multiloaderdataextensions$dataMaps = new IdentityHashMap<>();
 
     @Override
-    public <A> @Nullable A neoforgedatapackextensions$getData(DataMapType<T, A> type, ResourceKey<T> key) {
-        final var innerMap = this.neoforgedatapackextensions$dataMaps.get(type);
+    public <A> @Nullable A multiloaderdataextensions$getData(DataMapType<T, A> type, ResourceKey<T> key) {
+        final var innerMap = this.multiloaderdataextensions$dataMaps.get(type);
         return innerMap == null ? null : (A) innerMap.get(key);
     }
 
     @Override
-    public <A> Map<ResourceKey<T>, A> neoforgedatapackextensions$getDataMap(DataMapType<T, A> type) {
-        return (Map<ResourceKey<T>, A>) this.neoforgedatapackextensions$dataMaps.getOrDefault(type, Map.of());
+    public <A> Map<ResourceKey<T>, A> multiloaderdataextensions$getDataMap(DataMapType<T, A> type) {
+        return (Map<ResourceKey<T>, A>) this.multiloaderdataextensions$dataMaps.getOrDefault(type, Map.of());
     }
 
     @Override
-    public Map<DataMapType<T, ?>, Map<ResourceKey<T>, ?>> neoforgedatapackextensions$getDataMaps() {
-        return this.neoforgedatapackextensions$dataMaps;
+    public Map<DataMapType<T, ?>, Map<ResourceKey<T>, ?>> multiloaderdataextensions$getDataMaps() {
+        return this.multiloaderdataextensions$dataMaps;
     }
 }

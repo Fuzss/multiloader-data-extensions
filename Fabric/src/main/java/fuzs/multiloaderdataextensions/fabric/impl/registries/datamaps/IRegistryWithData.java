@@ -6,5 +6,5 @@ import net.neoforged.neoforge.registries.datamaps.DataMapType;
 import java.util.Map;
 
 public interface IRegistryWithData<T> {
-    Map<DataMapType<T, ?>, Map<ResourceKey<T>, ?>> neoforgedatapackextensions$getDataMaps();
+    Map<DataMapType<T, ?>, Map<ResourceKey<T>, ?>> multiloaderdataextensions$getDataMaps();
 }

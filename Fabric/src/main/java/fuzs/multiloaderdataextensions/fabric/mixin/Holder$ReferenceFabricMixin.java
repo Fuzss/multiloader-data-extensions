@@ -5,7 +5,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderOwner;
 import net.minecraft.resources.ResourceKey;
 import net.neoforged.neoforge.registries.datamaps.DataMapType;
-import net.neoforged.neoforge.registries.datamaps.ILookupWithData;
 import net.neoforged.neoforge.registries.datamaps.IWithData;
 import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
@@ -22,8 +21,8 @@ abstract class Holder$ReferenceFabricMixin<T> implements IWithData<T> {
     public abstract ResourceKey<T> key();
 
     @Override
-    public <T1> @Nullable T1 neoforgedatapackextensions$getData(DataMapType<T, T1> type) {
+    public <T1> @Nullable T1 multiloaderdataextensions$getData(DataMapType<T, T1> type) {
         return this.owner instanceof HolderLookup.RegistryLookup<T> lookup ?
-                ((ILookupWithData<T>) lookup).neoforgedatapackextensions$getData(type, this.key()) : null;
+                lookup.multiloaderdataextensions$getData(type, this.key()) : null;
     }
 }

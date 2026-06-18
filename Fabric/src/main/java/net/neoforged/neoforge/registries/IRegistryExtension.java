@@ -25,7 +25,7 @@ public interface IRegistryExtension<T> extends ILookupWithData<T> {
      *
      * @param <A> the data type
      */
-    default <A> Map<ResourceKey<T>, A> neoforgedatapackextensions$getDataMap(DataMapType<T, A> type) {
+    default <A> Map<ResourceKey<T>, A> multiloaderdataextensions$getDataMap(DataMapType<T, A> type) {
         return Map.of();
     }
 }

@@ -1,7 +1,7 @@
 classTweaker    v1  official
 accessible  field   net/minecraft/network/Connection    channel Lio/netty/channel/Channel;
 accessible  field   net/minecraft/server/network/ServerCommonPacketListenerImpl connection  Lnet/minecraft/network/Connection;
-extendable	method	net/minecraft/tags/TagEntry	<init>	(Lnet/minecraft/resources/Identifier;ZZ)V
-accessible	field	net/minecraft/tags/TagEntry	id	Lnet/minecraft/resources/Identifier;
-accessible	field	net/minecraft/tags/TagEntry	tag	Z
-accessible	field	net/minecraft/tags/TagEntry	required	Z
+transitive-inject-interface net/minecraft/core/Holder   net/neoforged/neoforge/registries/datamaps/IWithData<TT;>
+transitive-inject-interface net/minecraft/core/Registry net/neoforged/neoforge/registries/IRegistryExtension<TT;>
+transitive-inject-interface net/minecraft/core/HolderLookup$RegistryLookup  net/neoforged/neoforge/registries/datamaps/ILookupWithData<TT;>
+transitive-inject-interface net/minecraft/core/TypedInstance    net/neoforged/neoforge/common/extensions/TypedInstanceExtension<TT;>

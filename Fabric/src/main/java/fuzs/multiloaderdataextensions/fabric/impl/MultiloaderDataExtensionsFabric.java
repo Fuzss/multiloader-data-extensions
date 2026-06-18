@@ -24,7 +24,6 @@ import net.neoforged.neoforge.network.payload.KnownRegistryDataMapsPayload;
 import net.neoforged.neoforge.network.payload.KnownRegistryDataMapsReplyPayload;
 import net.neoforged.neoforge.network.payload.RegistryDataMapSyncPayload;
 import net.neoforged.neoforge.registries.DataMapLoader;
-import net.neoforged.neoforge.registries.IRegistryExtension;
 import net.neoforged.neoforge.registries.RegistryManager;
 import org.jspecify.annotations.Nullable;
 
@@ -95,7 +94,7 @@ public class MultiloaderDataExtensionsFabric implements ModInitializer {
         attachments.forEach(key -> {
             final var attach = RegistryManager.getDataMap(registry.key(), key);
             if (attach == null || attach.networkCodec() == null) return;
-            att.put(key, ((IRegistryExtension<T>) registry).neoforgedatapackextensions$getDataMap(attach));
+            att.put(key, registry.multiloaderdataextensions$getDataMap(attach));
         });
         if (!att.isEmpty()) {
             ServerPlayNetworking.send(player, new RegistryDataMapSyncPayload<>(registry.key(), att));

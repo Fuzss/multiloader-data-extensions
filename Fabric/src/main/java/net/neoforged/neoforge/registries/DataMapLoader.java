@@ -64,9 +64,9 @@ public class DataMapLoader implements PreparableReloadListener {
     }
 
     private <T> void apply(MappedRegistry<T> registry, LoadResult<T> result) {
-        ((IRegistryWithData<T>) registry).neoforgedatapackextensions$getDataMaps().clear();
+        ((IRegistryWithData<T>) registry).multiloaderdataextensions$getDataMaps().clear();
         result.results()
-                .forEach((key, entries) -> ((IRegistryWithData<T>) registry).neoforgedatapackextensions$getDataMaps()
+                .forEach((key, entries) -> ((IRegistryWithData<T>) registry).multiloaderdataextensions$getDataMaps()
                         .put(key, this.buildDataMap(registry, key, (List) entries)));
         DataMapsUpdatedCallback.EVENT.invoker()
                 .onDataMapsUpdated(registryAccess, registry, DataMapsUpdatedCallback.UpdateCause.SERVER_RELOAD);
