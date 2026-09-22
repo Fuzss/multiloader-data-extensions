@@ -51,7 +51,7 @@ public class RegistryManager {
      */
     public static <T, R> void registerDataMap(DataMapType<R, T> type) {
         final var registry = type.registryKey();
-        if (RegistryDataLoader.WORLDGEN_REGISTRIES.stream().anyMatch(data -> data.key().equals(registry))) {
+        if (RegistryDataLoader.WORLD_REGISTRIES.stream().anyMatch(data -> data.key().equals(registry))) {
             if (type.networkCodec() != null && RegistryDataLoader.SYNCHRONIZED_REGISTRIES.stream()
                     .noneMatch(data -> data.key().equals(registry))) {
                 throw new UnsupportedOperationException(
