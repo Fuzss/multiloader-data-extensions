@@ -7,18 +7,21 @@ package fuzs.multiloaderdataextensions.fabric.impl.neoforge.client.registries;
 
 import com.google.common.collect.Sets;
 import com.mojang.logging.LogUtils;
-import fuzs.multiloaderdataextensions.fabric.api.v2.DataMapsUpdatedCallback;
-import fuzs.multiloaderdataextensions.fabric.impl.registries.datamaps.IRegistryWithData;
-import net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import fuzs.multiloaderdataextensions.fabric.impl.neoforge.network.payload.KnownRegistryDataMapsPayload;
 import fuzs.multiloaderdataextensions.fabric.impl.neoforge.network.payload.KnownRegistryDataMapsReplyPayload;
 import fuzs.multiloaderdataextensions.fabric.impl.neoforge.network.payload.RegistryDataMapSyncPayload;
@@ -26,23 +29,15 @@ import fuzs.multiloaderdataextensions.fabric.impl.neoforge.registries.RegistryMa
 import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
 @ApiStatus.Internal
 public class ClientRegistryManager {
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    public static <R> void handleDataMapSync(final RegistryDataMapSyncPayload<R> payload, final ClientPlayNetworking.Context context) {
+    public static <R> void handleDataMapSync(final RegistryDataMapSyncPayload<R> payload, final net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking.Context context) {
         context.client().submit(() -> {
             try {
                 var regAccess = Minecraft.getInstance().level.registryAccess();
-                final MappedRegistry<R> registry = (MappedRegistry<R>) regAccess
-                        .lookupOrThrow(payload.registryKey());
-                ((IRegistryWithData<R>) registry).multiloaderdataextensions$getDataMaps().clear();
-                payload.dataMaps().forEach((attachKey, maps) -> ((IRegistryWithData<R>) registry).multiloaderdataextensions$getDataMaps().put(
-                        RegistryManager.getDataMap(payload.registryKey(), attachKey), Collections.unmodifiableMap(maps)));
-                DataMapsUpdatedCallback.EVENT.invoker().onDataMapsUpdated(regAccess, registry, DataMapsUpdatedCallback.UpdateCause.CLIENT_SYNC);
+                fuzs.multiloaderdataextensions.fabric.impl.registries.datamaps.DataMapSyncHelper.applyClientSync(regAccess, payload.registryKey(), payload.dataMaps());
             } catch (Throwable t) {
                 LOGGER.error("Failed to handle registry data map sync: ", t);
                 context.responseSender().disconnect(Component.translatable("neoforge.network.data_maps.failed", payload.registryKey().identifier().toString(), t.toString()));
@@ -50,7 +45,7 @@ public class ClientRegistryManager {
         });
     }
 
-    public static void handleKnownDataMaps(final KnownRegistryDataMapsPayload payload, final ClientConfigurationNetworking.Context context) {
+    public static void handleKnownDataMaps(final KnownRegistryDataMapsPayload payload, final net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking.Context context) {
         record MandatoryEntry(ResourceKey<? extends Registry<?>> registry, Identifier id) {}
         final Set<MandatoryEntry> ourMandatory = new HashSet<>();
         RegistryManager.getDataMaps().forEach((reg, values) -> values.values().forEach(attach -> {

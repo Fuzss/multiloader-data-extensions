@@ -15,7 +15,7 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * A registry data map contains data-driven object that can be attached to a registry object. <p>
- * Data maps are registered to the {@code RegisterDataMapTypesEvent}. <p>
+ * Data maps are registered to the {@link RegisterDataMapTypesEvent}. <p>
  * They are loaded from JSON files located at:
  *
  * <pre>{@code
@@ -41,7 +41,7 @@ import org.jspecify.annotations.Nullable;
  * </pre>
  *
  * </code>
- * Data maps support conditions both JSON-level and attachment-level through the {@code ConditionalOps#CONDITIONAL_VALUE_KEY} object.
+ * Data maps support conditions both JSON-level and attachment-level through the {@value ConditionalOps#CONDITIONAL_VALUE_KEY} object.
  * <p>
  * Data maps may be synced by specifying a {@link #networkCodec()}. If the map is {@link #mandatorySync() mandatory},
  * then vanilla clients (or any client that doesn't support this map) will not be able to connect.
@@ -50,8 +50,8 @@ import org.jspecify.annotations.Nullable;
  * Both datapack registries and normal, built-in registries support data maps.
  *
  * <p>
- * You can access a data map using {@link fuzs.multiloaderdataextensions.fabric.impl.neoforge.registries.IRegistryExtension#multiloaderdataextensions$getDataMap(DataMapType)} and {@link IWithData#multiloaderdataextensions$getData(DataMapType)}. <br>
- * You can usually go through {@linkplain net.minecraft.core.Holder Holder} implementations in order to get the data of an object directly.
+ * You can access a data map using {@link fuzs.multiloaderdataextensions.fabric.impl.neoforge.registries.IRegistryExtension#getDataMap(DataMapType)} and {@link IWithData#getData(DataMapType)}. <br>
+ * You can usually go through {@linkplain net.minecraft.core.Holder#getData(DataMapType)} Holder} implementations in order to get the data of an object directly.
  *
  * @see AdvancedDataMapType for more functionality
  */

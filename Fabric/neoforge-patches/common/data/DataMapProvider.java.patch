@@ -1,0 +1,81 @@
+--- a/common/data/DataMapProvider.java
++++ b/common/data/DataMapProvider.java
+@@ -28,9 +28,6 @@
+ import net.minecraft.resources.Identifier;
+ import net.minecraft.resources.ResourceKey;
+ import net.minecraft.tags.TagKey;
+-import net.neoforged.neoforge.common.conditions.ConditionalOps;
+-import net.neoforged.neoforge.common.conditions.ICondition;
+-import net.neoforged.neoforge.common.conditions.WithConditions;
+ import net.neoforged.neoforge.registries.DataMapLoader;
+ import net.neoforged.neoforge.registries.datamaps.AdvancedDataMapType;
+ import net.neoforged.neoforge.registries.datamaps.DataMapEntry;
+@@ -74,7 +71,7 @@
+ 
+     private <T, R> CompletableFuture<?> generate(Path out, CachedOutput cache, Builder<T, R> builder, DynamicOps<JsonElement> ops) {
+         return CompletableFuture.supplyAsync(() -> {
+-            final Codec<Optional<WithConditions<DataMapFile<T, R>>>> withConditionsCodec = ConditionalOps.createConditionalCodecWithConditions(DataMapFile.codec(builder.registryKey, builder.type));
++            final Codec<Optional<DataMapFile<T, R>>> withConditionsCodec = net.minecraft.util.ExtraCodecs.optionalEmptyMap(DataMapFile.codec(builder.registryKey, builder.type));
+             return withConditionsCodec.encodeStart(ops, Optional.of(builder.build())).getOrThrow(msg -> new RuntimeException("Failed to encode %s: %s".formatted(out, msg)));
+         }).thenComposeAsync(encoded -> DataProvider.saveStable(cache, encoded, out));
+     }
+@@ -104,11 +101,10 @@
+     }
+ 
+     public static class Builder<T, R> {
+-        private final Map<Either<TagKey<R>, ResourceKey<R>>, Optional<WithConditions<DataMapEntry<T>>>> values = new LinkedHashMap<>();
++        private final Map<Either<TagKey<R>, ResourceKey<R>>, DataMapEntry<T>> values = new LinkedHashMap<>();
+         protected final List<DataMapEntry.Removal<T, R>> removals = new ArrayList<>();
+         protected final ResourceKey<Registry<R>> registryKey;
+         private final DataMapType<R, T> type;
+-        private final List<ICondition> conditions = new ArrayList<>();
+ 
+         private boolean replace;
+ 
+@@ -117,21 +113,21 @@
+             this.registryKey = type.registryKey();
+         }
+ 
+-        public Builder<T, R> add(ResourceKey<R> key, T value, boolean replace, ICondition... conditions) {
+-            this.values.put(Either.right(key), Optional.of(new WithConditions<>(new DataMapEntry<>(value, replace), conditions)));
++        public Builder<T, R> add(ResourceKey<R> key, T value, boolean replace) {
++            this.values.put(Either.right(key), new DataMapEntry<>(value, replace));
+             return this;
+         }
+ 
+-        public Builder<T, R> add(Identifier id, T value, boolean replace, ICondition... conditions) {
+-            return add(ResourceKey.create(registryKey, id), value, replace, conditions);
++        public Builder<T, R> add(Identifier id, T value, boolean replace) {
++            return add(ResourceKey.create(registryKey, id), value, replace);
+         }
+ 
+-        public Builder<T, R> add(Holder<R> object, T value, boolean replace, ICondition... conditions) {
+-            return add(object.unwrapKey().orElseThrow(), value, replace, conditions);
++        public Builder<T, R> add(Holder<R> object, T value, boolean replace) {
++            return add(object.unwrapKey().orElseThrow(), value, replace);
+         }
+ 
+-        public Builder<T, R> add(TagKey<R> tag, T value, boolean replace, ICondition... conditions) {
+-            this.values.put(Either.left(tag), Optional.of(new WithConditions<>(new DataMapEntry<>(value, replace), conditions)));
++        public Builder<T, R> add(TagKey<R> tag, T value, boolean replace) {
++            this.values.put(Either.left(tag), new DataMapEntry<>(value, replace));
+             return this;
+         }
+ 
+@@ -155,14 +151,9 @@
+             return this;
+         }
+ 
+-        public Builder<T, R> conditions(ICondition... conditions) {
+-            Collections.addAll(this.conditions, conditions);
+-            return this;
++        public DataMapFile<T, R> build() {
++            return new DataMapFile<>(replace, values, removals);
+         }
+-
+-        public WithConditions<DataMapFile<T, R>> build() {
+-            return new WithConditions<>(conditions, new DataMapFile<>(replace, values, removals));
+-        }
+     }
+ 
+     public static class AdvancedBuilder<T, R, VR extends DataMapValueRemover<R, T>> extends Builder<T, R> {

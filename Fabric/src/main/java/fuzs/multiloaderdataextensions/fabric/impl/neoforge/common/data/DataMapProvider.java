@@ -10,22 +10,30 @@ import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.ExtraCodecs;
 import fuzs.multiloaderdataextensions.fabric.impl.neoforge.registries.DataMapLoader;
-import fuzs.multiloaderdataextensions.fabric.impl.neoforge.registries.datamaps.*;
-
-import java.nio.file.Path;
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
+import fuzs.multiloaderdataextensions.fabric.impl.neoforge.registries.datamaps.AdvancedDataMapType;
+import fuzs.multiloaderdataextensions.fabric.impl.neoforge.registries.datamaps.DataMapEntry;
+import fuzs.multiloaderdataextensions.fabric.impl.neoforge.registries.datamaps.DataMapFile;
+import fuzs.multiloaderdataextensions.fabric.impl.neoforge.registries.datamaps.DataMapType;
+import fuzs.multiloaderdataextensions.fabric.impl.neoforge.registries.datamaps.DataMapValueRemover;
 
 /**
  * A provider for {@link DataMapType data map} generation.
@@ -48,22 +56,22 @@ public abstract class DataMapProvider implements DataProvider {
 
     @Override
     public CompletableFuture<?> run(CachedOutput cache) {
-        gather();
-
         return lookupProvider.thenCompose(provider -> {
+            gather(provider);
+
             final DynamicOps<JsonElement> dynamicOps = provider.createSerializationContext(JsonOps.INSTANCE);
 
             return CompletableFuture.allOf(this.builders.entrySet().stream().map(entry -> {
                 DataMapType<?, ?> type = entry.getKey();
                 final Path path = this.pathProvider.json(type.id().withPrefix(DataMapLoader.getFolderLocation(type.registryKey().identifier()) + "/"));
-                return generate(path, cache, entry.getValue(), dynamicOps);
+                return (CompletableFuture<Object>) generate(path, cache, entry.getValue(), dynamicOps);
             }).toArray(CompletableFuture[]::new));
         });
     }
 
     private <T, R> CompletableFuture<?> generate(Path out, CachedOutput cache, Builder<T, R> builder, DynamicOps<JsonElement> ops) {
         return CompletableFuture.supplyAsync(() -> {
-            final Codec<Optional<DataMapFile<T, R>>> withConditionsCodec = ExtraCodecs.optionalEmptyMap(DataMapFile.codec(builder.registryKey, builder.type));
+            final Codec<Optional<DataMapFile<T, R>>> withConditionsCodec = net.minecraft.util.ExtraCodecs.optionalEmptyMap(DataMapFile.codec(builder.registryKey, builder.type));
             return withConditionsCodec.encodeStart(ops, Optional.of(builder.build())).getOrThrow(msg -> new RuntimeException("Failed to encode %s: %s".formatted(out, msg)));
         }).thenComposeAsync(encoded -> DataProvider.saveStable(cache, encoded, out));
     }
@@ -71,7 +79,7 @@ public abstract class DataMapProvider implements DataProvider {
     /**
      * Generate data map entries.
      */
-    protected abstract void gather();
+    protected abstract void gather(HolderLookup.Provider provider);
 
     @SuppressWarnings("unchecked")
     public <T, R> Builder<T, R> builder(DataMapType<R, T> type) {

@@ -7,7 +7,6 @@ package fuzs.multiloaderdataextensions.fabric.impl.neoforge.registries.datamaps;
 
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.Encoder;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +15,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
+import fuzs.multiloaderdataextensions.fabric.impl.neoforge.common.util.NeoForgeExtraCodecs;
 
 public record DataMapFile<T, R>(
         boolean replace,
@@ -30,10 +30,10 @@ public record DataMapFile<T, R>(
         if (dataMap instanceof AdvancedDataMapType<R, T, ?>) {
             final var removalCodec = DataMapEntry.Removal.codec(tagOrValue, dataMap);
             final AdvancedDataMapType<R, T, DataMapValueRemover<R, T>> advanced = (AdvancedDataMapType<R, T, DataMapValueRemover<R, T>>) dataMap;
-            removalsCodec = Codec.withAlternative(
-                    Codec.withAlternative(removalCodec.listOf(), Codec.of(Encoder.error("Cannot encode with decode-only codec!"), tagOrValue.listOf()
+            removalsCodec = NeoForgeExtraCodecs.withAlternative(
+                    NeoForgeExtraCodecs.withAlternative(removalCodec.listOf(), NeoForgeExtraCodecs.decodeOnly(tagOrValue.listOf()
                             .map(l -> l.stream().map(k -> new DataMapEntry.Removal<T, R>(k, Optional.empty())).toList()))),
-                    Codec.of(Encoder.error("Cannot encode with decode-only codec!"), ExtraCodecs.strictUnboundedMap(tagOrValue, advanced.remover())
+                    NeoForgeExtraCodecs.decodeOnly(ExtraCodecs.strictUnboundedMap(tagOrValue, advanced.remover())
                             .map(map -> map.entrySet().stream()
                                     .map(entry -> new DataMapEntry.Removal<>(entry.getKey(), Optional.of(entry.getValue()))).toList())));
         } else {

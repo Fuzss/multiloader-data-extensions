@@ -1,0 +1,41 @@
+--- a/network/configuration/RegistryDataMapNegotiation.java
++++ b/network/configuration/RegistryDataMapNegotiation.java
+@@ -14,7 +14,6 @@
+ import net.minecraft.core.Registry;
+ import net.minecraft.network.chat.Component;
+ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+-import net.minecraft.network.protocol.configuration.ServerConfigurationPacketListener;
+ import net.minecraft.resources.Identifier;
+ import net.minecraft.resources.ResourceKey;
+ import net.neoforged.neoforge.network.payload.KnownRegistryDataMapsPayload;
+@@ -23,9 +22,9 @@
+ import org.jetbrains.annotations.ApiStatus;
+ 
+ @ApiStatus.Internal
+-public record RegistryDataMapNegotiation(ServerConfigurationPacketListener listener) implements ICustomConfigurationTask {
+-    public static final Identifier ID = Identifier.fromNamespaceAndPath("neoforge", "registry_data_map_negotiation");
+-    public static final Type TYPE = new Type(ID);
++public record RegistryDataMapNegotiation(net.minecraft.server.network.ServerConfigurationPacketListenerImpl listener) implements ICustomConfigurationTask {
++    public static final Identifier ID = Identifier.fromNamespaceAndPath(fuzs.multiloaderdataextensions.common.impl.MultiloaderDataExtensions.MOD_ID, "registry_data_map_negotiation");
++    public static final Type TYPE = new Type(ID.toString());
+ 
+     @Override
+     public Type type() {
+@@ -34,7 +33,7 @@
+ 
+     @Override
+     public void run(Consumer<CustomPacketPayload> sender) {
+-        if (!listener.hasChannel(KnownRegistryDataMapsPayload.TYPE)) {
++        if (!net.fabricmc.fabric.api.networking.v1.ServerConfigurationNetworking.canSend(listener, KnownRegistryDataMapsPayload.TYPE)) {
+             final var mandatory = RegistryManager.getDataMaps().values()
+                     .stream()
+                     .flatMap(map -> map.values().stream())
+@@ -46,7 +45,7 @@
+                 listener.disconnect(Component.literal("This server does not support vanilla clients as it has mandatory registry data maps: ")
+                         .append(Component.literal(String.join(", ", mandatory)).withStyle(ChatFormatting.GOLD)));
+             } else {
+-                listener.finishCurrentTask(TYPE);
++                listener.completeTask(TYPE);
+             }
+ 
+             return;

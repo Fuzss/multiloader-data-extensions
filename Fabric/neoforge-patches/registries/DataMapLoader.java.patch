@@ -1,0 +1,70 @@
+--- a/registries/DataMapLoader.java
++++ b/registries/DataMapLoader.java
+@@ -30,12 +30,10 @@
+ import net.minecraft.tags.TagKey;
+ import net.minecraft.util.profiling.Profiler;
+ import net.minecraft.util.profiling.ProfilerFiller;
+-import net.neoforged.neoforge.common.NeoForge;
+ import net.neoforged.neoforge.registries.datamaps.AdvancedDataMapType;
+ import net.neoforged.neoforge.registries.datamaps.DataMapFile;
+ import net.neoforged.neoforge.registries.datamaps.DataMapType;
+ import net.neoforged.neoforge.registries.datamaps.DataMapValueMerger;
+-import net.neoforged.neoforge.registries.datamaps.DataMapsUpdatedEvent;
+ import net.neoforged.neoforge.resource.ContextAwareReloadListener;
+ import org.slf4j.Logger;
+ 
+@@ -53,17 +51,17 @@
+     }
+ 
+     public void apply(RegistryAccess registryAccess) {
+-        results.forEach((key, result) -> this.apply(registryAccess, (BaseMappedRegistry) registryAccess.lookupOrThrow(key), result));
++        results.forEach((key, result) -> this.apply(registryAccess, (Registry) registryAccess.lookupOrThrow(key), result));
+ 
+         // Clear the intermediary maps and objects
+         results = null;
+     }
+ 
+-    private <T> void apply(RegistryAccess registryAccess, BaseMappedRegistry<T> registry, LoadResult<T> result) {
+-        registry.dataMaps.clear();
+-        result.results().forEach((key, entries) -> registry.dataMaps.put(
++    private <T> void apply(RegistryAccess registryAccess, Registry<T> registry, LoadResult<T> result) {
++        fuzs.multiloaderdataextensions.fabric.impl.registries.datamaps.DataMapSyncHelper.getDataMaps(registry).clear();
++        result.results().forEach((key, entries) -> fuzs.multiloaderdataextensions.fabric.impl.registries.datamaps.DataMapSyncHelper.getDataMaps(registry).put(
+                 key, this.buildDataMap(registry, key, (List) entries)));
+-        NeoForge.EVENT_BUS.post(new DataMapsUpdatedEvent(registryAccess, registry, DataMapsUpdatedEvent.UpdateCause.SERVER_RELOAD));
++        fuzs.multiloaderdataextensions.fabric.impl.registries.datamaps.DataMapSyncHelper.fireServerReload(registryAccess, registry);
+     }
+ 
+     private <T, R> Map<ResourceKey<R>, T> buildDataMap(Registry<R> registry, DataMapType<R, T> attachment, List<DataMapFile<T, R>> entries) {
+@@ -76,11 +74,9 @@
+             }
+ 
+             entry.values().forEach((tKey, value) -> {
+-                if (value.isEmpty()) return;
+-
+                 resolve(registry, tKey, true, holder -> {
+-                    final var newValue = value.get().carrier();
+-                    final var key = holder.getKey();
++                    final var newValue = value;
++                    final var key = holder.unwrapKey().orElse(null);
+                     final var oldValue = result.get(key);
+                     if (oldValue == null || newValue.replace()) {
+                         result.put(key, new WithSource<>(newValue.value(), tKey));
+@@ -94,7 +90,7 @@
+                 if (removal.remover().isPresent()) {
+                     var remover = removal.remover().orElseThrow();
+                     resolve(registry, removal.key(), false, holder -> {
+-                        final var key = holder.getKey();
++                        final var key = holder.unwrapKey().orElse(null);
+                         final var oldValue = result.get(key);
+                         if (oldValue != null) {
+                             final var newValue = remover.remove(oldValue.attachment(), registry, oldValue.source(), holder.value());
+@@ -106,7 +102,7 @@
+                         }
+                     });
+                 } else {
+-                    resolve(registry, removal.key(), false, holder -> result.remove(holder.getKey()));
++                    resolve(registry, removal.key(), false, holder -> result.remove(holder.unwrapKey().orElse(null)));
+                 }
+             }
+         });

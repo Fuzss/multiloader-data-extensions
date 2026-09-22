@@ -8,7 +8,7 @@ package fuzs.multiloaderdataextensions.fabric.impl.neoforge.registries;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import fuzs.multiloaderdataextensions.fabric.impl.neoforge.registries.datamaps.DataMapType;
-import fuzs.multiloaderdataextensions.fabric.impl.neoforge.registries.datamaps.ILookupWithData;
+import fuzs.multiloaderdataextensions.fabric.impl.registries.datamaps.ILookupWithData;
 
 import java.util.Map;
 

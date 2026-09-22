@@ -6,7 +6,6 @@
 package fuzs.multiloaderdataextensions.fabric.impl.neoforge.network.payload;
 
 import com.google.common.collect.Maps;
-import fuzs.multiloaderdataextensions.common.impl.MultiloaderDataExtensions;
 import java.util.List;
 import java.util.Map;
 import net.minecraft.core.Registry;
@@ -16,15 +15,16 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import fuzs.multiloaderdataextensions.fabric.impl.neoforge.network.codec.NeoForgeStreamCodecs;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
 public record KnownRegistryDataMapsPayload(Map<ResourceKey<? extends Registry<?>>, List<KnownDataMap>> dataMaps) implements CustomPacketPayload {
-    public static final Type<KnownRegistryDataMapsPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(MultiloaderDataExtensions.MOD_ID, "known_registry_data_maps"));
+    public static final Type<KnownRegistryDataMapsPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(fuzs.multiloaderdataextensions.common.impl.MultiloaderDataExtensions.MOD_ID, "known_registry_data_maps"));
     public static final StreamCodec<FriendlyByteBuf, KnownRegistryDataMapsPayload> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.map(
                     Maps::newHashMapWithExpectedSize,
-                    Identifier.STREAM_CODEC.map(ResourceKey::createRegistryKey, ResourceKey::identifier),
+                    NeoForgeStreamCodecs.registryKey(),
                     KnownDataMap.STREAM_CODEC.apply(ByteBufCodecs.list())),
             KnownRegistryDataMapsPayload::dataMaps,
             KnownRegistryDataMapsPayload::new);

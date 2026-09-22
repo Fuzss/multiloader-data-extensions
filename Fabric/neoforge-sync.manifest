@@ -24,15 +24,17 @@ generated registries/datamaps/DataMapValueMerger.java
 generated registries/datamaps/DataMapFile.java
 generated registries/datamaps/DataMapType.java
 generated registries/datamaps/AdvancedDataMapType.java
+generated common/util/NeoForgeExtraCodecs.java
 generated network/payload/KnownRegistryDataMapsPayload.java
 generated network/payload/KnownRegistryDataMapsReplyPayload.java
+generated network/payload/RegistryDataMapSyncPayload.java
+generated network/configuration/ICustomConfigurationTask.java
+generated network/configuration/RegistryDataMapNegotiation.java
+generated client/registries/ClientRegistryManager.java
+generated registries/DataMapLoader.java
+generated common/data/DataMapProvider.java
 
+owned network/codec/NeoForgeStreamCodecs.java
+owned resource/ContextAwareReloadListener.java
 owned registries/RegistryManager.java
 owned registries/IRegistryExtension.java
-owned registries/DataMapLoader.java
-owned common/data/DataMapProvider.java
-owned client/registries/ClientRegistryManager.java
-owned network/configuration/RegistryDataMapNegotiation.java
-owned network/payload/RegistryDataMapSyncPayload.java
-
-local registries/datamaps/ILookupWithData.java

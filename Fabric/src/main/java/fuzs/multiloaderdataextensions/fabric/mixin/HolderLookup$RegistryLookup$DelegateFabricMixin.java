@@ -3,7 +3,7 @@ package fuzs.multiloaderdataextensions.fabric.mixin;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceKey;
 import fuzs.multiloaderdataextensions.fabric.impl.neoforge.registries.datamaps.DataMapType;
-import fuzs.multiloaderdataextensions.fabric.impl.neoforge.registries.datamaps.ILookupWithData;
+import fuzs.multiloaderdataextensions.fabric.impl.registries.datamaps.ILookupWithData;
 import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

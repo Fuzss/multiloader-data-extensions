@@ -47,8 +47,9 @@ public class MultiloaderDataExtensionsFabric implements ModInitializer {
                             ReloadableServerResources reloadableServerResources = RELOADABLE_SERVER_RESOURCES_REFERENCE.get()
                                     .get();
                             Objects.requireNonNull(reloadableServerResources, "reloadable server resources is null");
-                            return dataMapLoader = new DataMapLoader((RegistryAccess) reloadableServerResources.fullRegistries()
-                                    .lookup());
+                            DataMapLoader loader = new DataMapLoader();
+                            loader.injectContext(reloadableServerResources.fullRegistries().lookup());
+                            return dataMapLoader = loader;
                         });
     }
 
@@ -56,7 +57,7 @@ public class MultiloaderDataExtensionsFabric implements ModInitializer {
         CommonLifecycleEvents.TAGS_LOADED.register((RegistryAccess registries, boolean client) -> {
             if (!client) {
                 Objects.requireNonNull(dataMapLoader, "data map loader is null");
-                dataMapLoader.apply();
+                dataMapLoader.apply(registries);
             }
         });
         ServerConfigurationConnectionEvents.CONFIGURE.register((ServerConfigurationPacketListenerImpl handler, MinecraftServer server) -> {

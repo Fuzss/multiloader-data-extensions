@@ -5,45 +5,35 @@
 
 package fuzs.multiloaderdataextensions.fabric.impl.neoforge.network.configuration;
 
-import fuzs.multiloaderdataextensions.common.impl.MultiloaderDataExtensions;
-import net.fabricmc.fabric.api.networking.v1.ServerConfigurationNetworking;
-import net.minecraft.ChatFormatting;
-import net.minecraft.core.Registry;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.Identifier;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.network.ConfigurationTask;
-import net.minecraft.server.network.ServerConfigurationPacketListenerImpl;
-import fuzs.multiloaderdataextensions.fabric.impl.neoforge.network.payload.KnownRegistryDataMapsPayload;
-import fuzs.multiloaderdataextensions.fabric.impl.neoforge.registries.RegistryManager;
-import fuzs.multiloaderdataextensions.fabric.impl.neoforge.registries.datamaps.DataMapType;
-import org.jetbrains.annotations.ApiStatus;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.Registry;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import fuzs.multiloaderdataextensions.fabric.impl.neoforge.network.payload.KnownRegistryDataMapsPayload;
+import fuzs.multiloaderdataextensions.fabric.impl.neoforge.registries.RegistryManager;
+import fuzs.multiloaderdataextensions.fabric.impl.neoforge.registries.datamaps.DataMapType;
+import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
-public record RegistryDataMapNegotiation(ServerConfigurationPacketListenerImpl listener) implements ConfigurationTask {
-    public static final Identifier ID = Identifier.fromNamespaceAndPath(MultiloaderDataExtensions.MOD_ID, "registry_data_map_negotiation");
+public record RegistryDataMapNegotiation(net.minecraft.server.network.ServerConfigurationPacketListenerImpl listener) implements ICustomConfigurationTask {
+    public static final Identifier ID = Identifier.fromNamespaceAndPath(fuzs.multiloaderdataextensions.common.impl.MultiloaderDataExtensions.MOD_ID, "registry_data_map_negotiation");
     public static final Type TYPE = new Type(ID.toString());
-
-    @Override
-    public void start(Consumer<Packet<?>> task) {
-        this.run(customPacketPayload -> task.accept(ServerConfigurationNetworking.createClientboundPacket(customPacketPayload)));
-    }
 
     @Override
     public Type type() {
         return TYPE;
     }
 
+    @Override
     public void run(Consumer<CustomPacketPayload> sender) {
-        if (!ServerConfigurationNetworking.canSend(listener, KnownRegistryDataMapsPayload.TYPE)) {
+        if (!net.fabricmc.fabric.api.networking.v1.ServerConfigurationNetworking.canSend(listener, KnownRegistryDataMapsPayload.TYPE)) {
             final var mandatory = RegistryManager.getDataMaps().values()
                     .stream()
                     .flatMap(map -> map.values().stream())
