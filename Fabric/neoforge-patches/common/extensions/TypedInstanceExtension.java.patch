@@ -1,0 +1,13 @@
+--- a/common/extensions/TypedInstanceExtension.java
++++ b/common/extensions/TypedInstanceExtension.java
+@@ -13,8 +13,8 @@
+ public interface TypedInstanceExtension<T> extends IWithData<T> {
+     @Nullable
+     @Override
+-    default <D> D getData(DataMapType<T, D> type) {
+-        return self().typeHolder().getData(type);
++    default <D> D multiloaderdataextensions$getData(DataMapType<T, D> type) {
++        return self().typeHolder().multiloaderdataextensions$getData(type);
+     }
+ 
+     private TypedInstance<T> self() {

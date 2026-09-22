@@ -1,7 +1,7 @@
 package fuzs.multiloaderdataextensions.fabric.impl.registries.datamaps;
 
 import net.minecraft.resources.ResourceKey;
-import net.neoforged.neoforge.registries.datamaps.DataMapType;
+import fuzs.multiloaderdataextensions.fabric.impl.neoforge.registries.datamaps.DataMapType;
 
 import java.util.Map;
 

@@ -9,8 +9,8 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.neoforged.neoforge.registries.RegistryManager;
-import net.neoforged.neoforge.registries.datamaps.DataMapType;
+import fuzs.multiloaderdataextensions.fabric.impl.neoforge.registries.RegistryManager;
+import fuzs.multiloaderdataextensions.fabric.impl.neoforge.registries.datamaps.DataMapType;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Map;

@@ -15,9 +15,10 @@ import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 
 /**
- * Event fired on the {@code net.neoforged.neoforge.common.NeoForge#EVENT_BUS game event bus} when the data maps of a
- * registry have either been {@linkplain UpdateCause#CLIENT_SYNC synced to the client} or
- * {@linkplain UpdateCause#SERVER_RELOAD reloaded on the server}.
+ * Callback fired when the data maps of a registry have either been
+ * {@linkplain UpdateCause#CLIENT_SYNC synced to the client} or
+ * {@linkplain UpdateCause#SERVER_RELOAD reloaded on the server}. This is the Fabric equivalent of NeoForge's
+ * {@code DataMapsUpdatedEvent}.
  * <p>
  * This event can be used to build caches (like weighed lists) or for post-processing the data map values. <br> Remember
  * however that the data map values should <strong>not</strong> end up referencing their owner, as they're not copied

@@ -1,0 +1,38 @@
+# Upstream NeoForge source sync manifest for the Fabric platform.
+#
+# Paths are relative to the upstream package root `net.neoforged.neoforge`
+# (upstream) and to `fuzs.multiloaderdataextensions.fabric.impl.neoforge`
+# (local). The upstream sources are fetched from the
+# `net.neoforged:neoforge:<neoforge.version>:sources` artifact declared in the
+# `sharedLibs` version catalog.
+#
+# Modes:
+#   generated - fetched from upstream, a patch from Fabric/neoforge-patches is
+#               applied when present (same relative path + `.patch`), then the
+#               package is relocated. Never edit these by hand.
+#   owned     - hand-maintained; upstream is only fetched to report drift, never
+#               written.
+#   local     - no upstream counterpart; hand-maintained, never fetched.
+#
+# Format: <mode> <path>
+
+generated common/extensions/TypedInstanceExtension.java
+generated registries/datamaps/IWithData.java
+generated registries/datamaps/DataMapEntry.java
+generated registries/datamaps/DataMapValueRemover.java
+generated registries/datamaps/DataMapValueMerger.java
+generated registries/datamaps/DataMapFile.java
+generated registries/datamaps/DataMapType.java
+generated registries/datamaps/AdvancedDataMapType.java
+generated network/payload/KnownRegistryDataMapsPayload.java
+generated network/payload/KnownRegistryDataMapsReplyPayload.java
+
+owned registries/RegistryManager.java
+owned registries/IRegistryExtension.java
+owned registries/DataMapLoader.java
+owned common/data/DataMapProvider.java
+owned client/registries/ClientRegistryManager.java
+owned network/configuration/RegistryDataMapNegotiation.java
+owned network/payload/RegistryDataMapSyncPayload.java
+
+local registries/datamaps/ILookupWithData.java

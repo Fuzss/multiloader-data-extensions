@@ -1,7 +1,7 @@
 package fuzs.multiloaderdataextensions.fabric.mixin;
 
 import net.minecraft.core.HolderLookup;
-import net.neoforged.neoforge.registries.datamaps.ILookupWithData;
+import fuzs.multiloaderdataextensions.fabric.impl.neoforge.registries.datamaps.ILookupWithData;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(HolderLookup.RegistryLookup.class)
