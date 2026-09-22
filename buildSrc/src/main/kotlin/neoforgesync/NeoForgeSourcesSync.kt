@@ -88,8 +88,11 @@ object NeoForgeLock {
     }
 }
 
-class NeoForgeSourcesGenerator(private val exec: (File, List<String>) -> Int) {
-    data class Result(val ownedHashes: Map<String, String>)
+data class ExecOutcome(val exitValue: Int, val output: String)
+
+class NeoForgeSourcesGenerator(private val exec: (File, List<String>) -> ExecOutcome) {
+    data class FileOutcome(val path: String, val mode: SyncMode, val patched: Boolean, val patchOutput: String = "")
+    data class Result(val outcomes: List<FileOutcome>, val ownedHashes: Map<String, String>)
 
     fun generate(
         manifestFile: File,
@@ -107,10 +110,11 @@ class NeoForgeSourcesGenerator(private val exec: (File, List<String>) -> Int) {
         NeoForgeSourcesSync.extractSources(sourcesJar, upstreamDir)
 
         val ownedHashes = sortedMapOf<String, String>()
+        val outcomes = mutableListOf<FileOutcome>()
         for (entry in NeoForgeSourcesSync.parseManifest(manifestFile)) {
             val upstream = File(upstreamDir, entry.path)
             when (entry.mode) {
-                SyncMode.LOCAL -> Unit
+                SyncMode.LOCAL -> outcomes += FileOutcome(entry.path, entry.mode, patched = false)
 
                 SyncMode.OWNED -> {
                     require(upstream.isFile) { "Missing upstream file for owned entry: ${entry.path}" }
@@ -120,6 +124,7 @@ class NeoForgeSourcesGenerator(private val exec: (File, List<String>) -> Int) {
                         dest.parentFile.mkdirs()
                         upstream.copyTo(dest, overwrite = true)
                     }
+                    outcomes += FileOutcome(entry.path, entry.mode, patched = false)
                 }
 
                 SyncMode.GENERATED -> {
@@ -129,10 +134,15 @@ class NeoForgeSourcesGenerator(private val exec: (File, List<String>) -> Int) {
                     upstream.copyTo(staged, overwrite = true)
 
                     val patch = File(patchesDir, "${entry.path}.patch")
+                    var patched = false
+                    var patchOutput = ""
                     if (patch.isFile) {
-                        val exit = exec(stagingDir, listOf("patch", "-p1", "--silent", "-i", patch.absolutePath))
-                        check(exit == 0) {
-                            "Failed to apply patch '${patch.name}' (patch exit code $exit). " +
+                        patched = true
+                        val outcome = exec(stagingDir, listOf("patch", "-p1", "-i", patch.absolutePath))
+                        patchOutput = outcome.output
+                        check(outcome.exitValue == 0) {
+                            "Failed to apply patch '${patch.name}' (patch exit code ${outcome.exitValue}).\n" +
+                                patchOutput.trim() + "\n" +
                                 "Resolve the conflict and update the patch."
                         }
                     }
@@ -146,9 +156,10 @@ class NeoForgeSourcesGenerator(private val exec: (File, List<String>) -> Int) {
                     val out = File(outputDir, entry.path)
                     out.parentFile.mkdirs()
                     out.writeText(relocated)
+                    outcomes += FileOutcome(entry.path, entry.mode, patched, patchOutput)
                 }
             }
         }
-        return Result(ownedHashes)
+        return Result(outcomes, ownedHashes)
     }
 }

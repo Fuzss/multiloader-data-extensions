@@ -14,6 +14,7 @@ import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecOperations
+import java.io.ByteArrayOutputStream
 import java.io.File
 import javax.inject.Inject
 
@@ -51,32 +52,62 @@ abstract class SyncNeoForgeSourcesTask : DefaultTask() {
     fun sync() {
         val previous = NeoForgeLock.ownedHashes(NeoForgeLock.read(lockFile.get().asFile))
         val reportDir = File(workDir.get().asFile, "owned-upstream")
+        val sourcesJar = sourcesJar()
+        val version = neoforgeVersion.get()
+        logger.lifecycle("NeoForge sources $version (${sourcesJar.name})")
+
         val result = generator().generate(
             manifestFile.get().asFile,
             patchesDir.get().asFile,
             committedDir.get().asFile,
             workDir.get().asFile,
-            sourcesJar(),
+            sourcesJar,
             packagePrefix.get(),
             reportDir = reportDir,
         )
 
-        val changed = result.ownedHashes.filter { (path, hash) -> previous[path] != null && previous[path] != hash }
-        if (changed.isNotEmpty()) {
-            logger.warn("Upstream sources changed for 'owned' files; review and port manually:")
-            changed.keys.sorted().forEach { path -> logger.warn("  - $path (see ${File(reportDir, path)})") }
+        val changed = result.ownedHashes
+            .filter { (path, hash) -> previous[path] != null && previous[path] != hash }
+            .keys
+
+        val width = result.outcomes.maxOfOrNull { it.path.length } ?: 0
+        for (outcome in result.outcomes) {
+            val tag = when (outcome.mode) {
+                SyncMode.GENERATED -> if (outcome.patched) "[patched]" else "[verbatim]"
+                SyncMode.OWNED -> if (outcome.path in changed) "[changed]" else "[unchanged]"
+                SyncMode.LOCAL -> "[local]"
+            }
+            logger.lifecycle("  %-9s %s %s".format(outcome.mode.name.lowercase(), outcome.path.padEnd(width), tag))
+            if (outcome.patchOutput.isNotBlank()) {
+                outcome.patchOutput.trim().lines().forEach { logger.info("      $it") }
+            }
         }
 
-        NeoForgeLock.write(lockFile.get().asFile, neoforgeVersion.get(), result.ownedHashes)
-        logger.lifecycle("NeoForge sources synced from version ${neoforgeVersion.get()}.")
+        val generated = result.outcomes.count { it.mode == SyncMode.GENERATED }
+        val patched = result.outcomes.count { it.mode == SyncMode.GENERATED && it.patched }
+        val owned = result.outcomes.count { it.mode == SyncMode.OWNED }
+        val local = result.outcomes.count { it.mode == SyncMode.LOCAL }
+        logger.lifecycle("$generated generated ($patched patched, ${generated - patched} verbatim), $owned owned, $local local")
+
+        if (changed.isNotEmpty()) {
+            logger.warn("Upstream sources changed for 'owned' files; review and port manually:")
+            changed.sorted().forEach { path -> logger.warn("  - $path (see ${File(reportDir, path)})") }
+        }
+
+        NeoForgeLock.write(lockFile.get().asFile, version, result.ownedHashes)
+        logger.lifecycle("NeoForge sources synced from version $version.")
     }
 
     private fun generator(): NeoForgeSourcesGenerator = NeoForgeSourcesGenerator { dir, command ->
-        execOps.exec {
+        val output = ByteArrayOutputStream()
+        val exit = execOps.exec {
             commandLine(command)
             workingDir = dir
             isIgnoreExitValue = true
+            standardOutput = output
+            errorOutput = output
         }.exitValue
+        ExecOutcome(exit, output.toString(Charsets.UTF_8))
     }
 
     private fun sourcesJar(): File {
@@ -126,11 +157,15 @@ abstract class CheckNeoForgeSourcesTask : DefaultTask() {
         val reportDir = File(work, "owned-upstream")
 
         val result = NeoForgeSourcesGenerator { dir, command ->
-            execOps.exec {
+            val output = ByteArrayOutputStream()
+            val exit = execOps.exec {
                 commandLine(command)
                 workingDir = dir
                 isIgnoreExitValue = true
+                standardOutput = output
+                errorOutput = output
             }.exitValue
+            ExecOutcome(exit, output.toString(Charsets.UTF_8))
         }.generate(
             manifestFile.get().asFile,
             patchesDir.get().asFile,
