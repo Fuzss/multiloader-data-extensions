@@ -10,7 +10,25 @@ dependencies {
     modApi(sharedLibs.fabricapi.fabric)
 }
 
-// region Vendored NeoForge source sync
+multiloader {
+    modFile {
+        packagePrefix.set("impl")
+        library.set(true)
+    }
+
+    mixins {
+        mixin(
+            "Holder\$ReferenceFabricMixin",
+            "HolderFabricMixin",
+            "HolderLookup\$RegistryLookup\$DelegateFabricMixin",
+            "HolderLookup\$RegistryLookupFabricMixin",
+            "MappedRegistryFabricMixin",
+            "RegistryFabricMixin",
+            "ReloadableServerResourcesFabricMixin",
+            "TypedInstanceFabricMixin"
+        )
+    }
+}
 
 val neoforgeSourceVersion: String = extensions.getByType<VersionCatalogsExtension>()
     .named("sharedLibs")
@@ -75,27 +93,5 @@ tasks.named("check") {
 spotless {
     java {
         targetExclude("src/main/java/${vendoredPackagePrefix.replace('.', '/')}/**")
-    }
-}
-
-// endregion
-
-multiloader {
-    modFile {
-        packagePrefix.set("impl")
-        library.set(true)
-    }
-
-    mixins {
-        mixin(
-            "Holder\$ReferenceFabricMixin",
-            "HolderFabricMixin",
-            "HolderLookup\$RegistryLookup\$DelegateFabricMixin",
-            "HolderLookup\$RegistryLookupFabricMixin",
-            "MappedRegistryFabricMixin",
-            "RegistryFabricMixin",
-            "ReloadableServerResourcesFabricMixin",
-            "TypedInstanceFabricMixin"
-        )
     }
 }
