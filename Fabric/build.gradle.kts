@@ -44,7 +44,7 @@ val vendoredPackagePrefix = "${mod.group}.${packageName}.impl.neoforge"
 
 repositories {
     maven("https://maven.neoforged.net/releases/") {
-        name = "NeoForged"
+        name = "NeoForge"
         content {
             includeGroup("net.neoforged")
         }

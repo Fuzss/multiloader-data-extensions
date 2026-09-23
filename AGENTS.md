@@ -75,6 +75,14 @@ Patches are authored against pristine upstream and stored at the full upstream p
   - vendored `.../neoforge/common/util/NeoForgeExtraCodecs.java` (generated, verbatim) keeps its codec helpers.
   - Fabric glue helpers live **outside** the mirror tree, e.g.
     `...fabric.impl.network.FriendlyByteBufHelper`, `...fabric.impl.registries.datamaps.DataMapSyncHelper`.
+- **For large, self-contained removals, comment the block out with `/* ... */` instead of deleting it.** It
+  yields a smaller patch whose hunks depend only on the block boundaries (not its body), so upstream edits
+  inside the block do not break the patch. Do this only when the block contains no javadoc (`/** ... */`) —
+  block comments cannot nest; delete outright in that case. The trade-off is that the generated file keeps the
+  code as commented-out.
+- **Do not vendor extra classes just to avoid patching call sites in non-relocatable modules.** Where classes
+  keep their original package (e.g. a shared common module), vendoring more upstream classes increases the
+  chance of clashes with other mods that bundle the same classes. Patch the call sites instead.
 
 A new patch is created by diffing a pristine upstream copy against your edited copy, e.g.
 `diff -u --label a/<full/path> --label b/<full/path> <upstream> <edited>`. Do not hand-write hunk headers.

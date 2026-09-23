@@ -148,7 +148,18 @@ class VendoredSourcesGenerator(private val exec: (File, List<String>) -> ExecOut
         reportDir: File?,
     ): Result {
         val sourcesByName = sources.associateBy { it.name }
-        val upstreamDirs = sources.associate { source ->
+        val entries = VendoredSources.parseManifest(manifestFile)
+        entries.forEach { entry ->
+            entry.source?.let { name ->
+                require(sourcesByName.containsKey(name)) {
+                    "Unknown source '$name' for manifest entry '${entry.path}'"
+                }
+            }
+        }
+
+        // Only extract sources that are actually referenced by the manifest.
+        val usedSourceNames = entries.mapNotNull { it.source }.toSet()
+        val upstreamDirs = sources.filter { it.name in usedSourceNames }.associate { source ->
             val dir = File(workDir, "upstream/${source.name}")
             dir.deleteRecursively()
             VendoredSources.extractSource(source.sourcesJar, source.packageRootPath, dir)
@@ -159,12 +170,12 @@ class VendoredSourcesGenerator(private val exec: (File, List<String>) -> ExecOut
 
         val ownedHashes = sortedMapOf<String, String>()
         val outcomes = mutableListOf<FileOutcome>()
-        for (entry in VendoredSources.parseManifest(manifestFile)) {
+        for (entry in entries) {
             when (entry.mode) {
                 SyncMode.LOCAL -> outcomes += FileOutcome(entry.path, null, entry.mode, patched = false)
 
                 SyncMode.OWNED -> {
-                    val source = source(sourcesByName, entry)
+                    val source = sourcesByName.getValue(requireNotNull(entry.source))
                     val upstream = File(upstreamDirs.getValue(source.name), entry.path)
                     require(upstream.isFile) {
                         "Missing upstream file for owned entry '${entry.path}' in source '${source.name}'"
@@ -179,7 +190,7 @@ class VendoredSourcesGenerator(private val exec: (File, List<String>) -> ExecOut
                 }
 
                 SyncMode.GENERATED -> {
-                    val source = source(sourcesByName, entry)
+                    val source = sourcesByName.getValue(requireNotNull(entry.source))
                     val upstream = File(upstreamDirs.getValue(source.name), entry.path)
                     require(upstream.isFile) {
                         "Missing upstream file for generated entry '${entry.path}' in source '${source.name}'"
@@ -218,10 +229,5 @@ class VendoredSourcesGenerator(private val exec: (File, List<String>) -> ExecOut
             }
         }
         return Result(outcomes, ownedHashes)
-    }
-
-    private fun source(sourcesByName: Map<String, SourceSpec>, entry: ManifestEntry): SourceSpec {
-        return sourcesByName[entry.source]
-            ?: error("Unknown source '${entry.source}' for manifest entry '${entry.path}'")
     }
 }
