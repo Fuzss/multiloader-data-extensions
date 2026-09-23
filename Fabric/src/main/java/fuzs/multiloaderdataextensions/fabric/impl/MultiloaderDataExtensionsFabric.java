@@ -19,12 +19,12 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerConfigurationPacketListenerImpl;
-import fuzs.multiloaderdataextensions.fabric.impl.neoforge.network.configuration.RegistryDataMapNegotiation;
-import fuzs.multiloaderdataextensions.fabric.impl.neoforge.network.payload.KnownRegistryDataMapsPayload;
-import fuzs.multiloaderdataextensions.fabric.impl.neoforge.network.payload.KnownRegistryDataMapsReplyPayload;
-import fuzs.multiloaderdataextensions.fabric.impl.neoforge.network.payload.RegistryDataMapSyncPayload;
-import fuzs.multiloaderdataextensions.fabric.impl.neoforge.registries.DataMapLoader;
-import fuzs.multiloaderdataextensions.fabric.impl.neoforge.registries.RegistryManager;
+import fuzs.multiloaderdataextensions.fabric.neoforge.network.configuration.RegistryDataMapNegotiation;
+import fuzs.multiloaderdataextensions.fabric.neoforge.network.payload.KnownRegistryDataMapsPayload;
+import fuzs.multiloaderdataextensions.fabric.neoforge.network.payload.KnownRegistryDataMapsReplyPayload;
+import fuzs.multiloaderdataextensions.fabric.neoforge.network.payload.RegistryDataMapSyncPayload;
+import fuzs.multiloaderdataextensions.fabric.neoforge.registries.DataMapLoader;
+import fuzs.multiloaderdataextensions.fabric.neoforge.registries.RegistryManager;
 import org.jspecify.annotations.Nullable;
 
 import java.lang.ref.WeakReference;

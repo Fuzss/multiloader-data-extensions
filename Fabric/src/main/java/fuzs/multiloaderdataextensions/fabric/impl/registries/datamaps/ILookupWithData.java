@@ -1,6 +1,6 @@
 package fuzs.multiloaderdataextensions.fabric.impl.registries.datamaps;
 
-import fuzs.multiloaderdataextensions.fabric.impl.neoforge.registries.datamaps.DataMapType;
+import fuzs.multiloaderdataextensions.fabric.neoforge.registries.datamaps.DataMapType;
 import net.minecraft.resources.ResourceKey;
 import org.jspecify.annotations.Nullable;
 

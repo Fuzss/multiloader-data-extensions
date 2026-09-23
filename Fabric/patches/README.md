@@ -21,7 +21,7 @@ wrapper, a `patch` binary (macOS/Linux provide one), and network access to resol
                   relocate package (SourceSpec.relocateTo)
                           |
                           v
-   Fabric/src/main/java/fuzs/multiloaderdataextensions/fabric/impl/neoforge/...   (committed)
+   Fabric/src/main/java/fuzs/multiloaderdataextensions/fabric/neoforge/...   (committed)
 ```
 
 1. The source jar is extracted to a scratch directory.
@@ -83,7 +83,7 @@ SourceSpec(
 ```
 
 The relocation target is derived from the mod, never hardcoded:
-`"${mod.group}.${packageName}.impl.neoforge"`.
+`"${mod.group}.${packageName}.neoforge"`.
 
 To add another upstream source (e.g. FML or Minecraft Forge), add a `SourceSpec` with its own
 `packageRoot`/`relocateTo`/`sourcesJar` and reference it by `name` in the manifest.
@@ -255,7 +255,7 @@ then run `syncVendoredSources` to refresh the lock.
 ## Rules of thumb
 
 - `patches/` is the source of truth; the files under
-  `Fabric/src/main/java/fuzs/multiloaderdataextensions/fabric/impl/neoforge/**` are generated. Never edit them
+  `Fabric/src/main/java/fuzs/multiloaderdataextensions/fabric/neoforge/**` are generated. Never edit them
   by hand — edit the patch and run `syncVendoredSources`.
 - Always commit the regenerated sources, `manifest`, `lock` and any patch changes together.
 - The vendored tree is excluded from Spotless and marked generated in `.gitattributes`; do not reformat it.

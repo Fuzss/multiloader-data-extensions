@@ -1,8 +1,8 @@
 package fuzs.multiloaderdataextensions.fabric.impl.registries.datamaps;
 
 import fuzs.multiloaderdataextensions.fabric.api.v2.DataMapsUpdatedCallback;
-import fuzs.multiloaderdataextensions.fabric.impl.neoforge.registries.RegistryManager;
-import fuzs.multiloaderdataextensions.fabric.impl.neoforge.registries.datamaps.DataMapType;
+import fuzs.multiloaderdataextensions.fabric.neoforge.registries.RegistryManager;
+import fuzs.multiloaderdataextensions.fabric.neoforge.registries.datamaps.DataMapType;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.Identifier;

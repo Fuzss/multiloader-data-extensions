@@ -1,7 +1,7 @@
 package fuzs.multiloaderdataextensions.fabric.mixin;
 
 import net.minecraft.core.Registry;
-import fuzs.multiloaderdataextensions.fabric.impl.neoforge.registries.IRegistryExtension;
+import fuzs.multiloaderdataextensions.fabric.neoforge.registries.IRegistryExtension;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(Registry.class)

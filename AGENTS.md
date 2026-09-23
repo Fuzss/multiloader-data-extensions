@@ -26,8 +26,8 @@ Java version comes from the `sharedLibs` version catalog (`java` key); the NeoFo
 
 ## Vendored upstream sources (Fabric)
 
-Vendored classes live under `Fabric/src/main/java/fuzs/multiloaderdataextensions/fabric/impl/neoforge/**`,
-relocated from `net.neoforged.neoforge.*` to `fuzs.multiloaderdataextensions.fabric.impl.neoforge.*`. The
+Vendored classes live under `Fabric/src/main/java/fuzs/multiloaderdataextensions/fabric/neoforge/**`,
+relocated from `net.neoforged.neoforge.*` to `fuzs.multiloaderdataextensions.fabric.neoforge.*`. The
 relocation target is derived from the mod group (`mod.group` / `packageName`), never hardcoded.
 
 The sync is driven by `buildSrc` (`fuzs.multiloader.vendoredsources` package) and configured in

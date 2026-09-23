@@ -40,7 +40,7 @@ val neoforgeSourceVersion: String = extensions.getByType<VersionCatalogsExtensio
     .requiredVersion
 
 // Relocation target for the vendored NeoForge sources, derived from the mod group instead of hardcoded.
-val vendoredPackagePrefix = "${mod.group}.${packageName}.impl.neoforge"
+val vendoredPackagePrefix = "${mod.group}.${packageName}.neoforge"
 
 repositories {
     maven("https://maven.neoforged.net/releases/") {

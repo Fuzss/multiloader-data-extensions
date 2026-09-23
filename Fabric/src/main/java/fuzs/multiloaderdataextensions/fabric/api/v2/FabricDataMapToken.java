@@ -5,7 +5,7 @@ import fuzs.multiloaderdataextensions.common.api.v2.DataMapToken;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
-import fuzs.multiloaderdataextensions.fabric.impl.neoforge.registries.datamaps.DataMapType;
+import fuzs.multiloaderdataextensions.fabric.neoforge.registries.datamaps.DataMapType;
 import org.jspecify.annotations.Nullable;
 
 public record FabricDataMapToken<R, T>(DataMapType<R, T> type) implements DataMapToken<R, T> {

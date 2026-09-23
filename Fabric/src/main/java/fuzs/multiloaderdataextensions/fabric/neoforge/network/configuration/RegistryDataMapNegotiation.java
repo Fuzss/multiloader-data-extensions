@@ -1,0 +1,66 @@
+/*
+ * Copyright (c) NeoForged and contributors
+ * SPDX-License-Identifier: LGPL-2.1-only
+ */
+
+package fuzs.multiloaderdataextensions.fabric.neoforge.network.configuration;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.Registry;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import fuzs.multiloaderdataextensions.fabric.neoforge.network.payload.KnownRegistryDataMapsPayload;
+import fuzs.multiloaderdataextensions.fabric.neoforge.registries.RegistryManager;
+import fuzs.multiloaderdataextensions.fabric.neoforge.registries.datamaps.DataMapType;
+import org.jetbrains.annotations.ApiStatus;
+
+@ApiStatus.Internal
+public record RegistryDataMapNegotiation(net.minecraft.server.network.ServerConfigurationPacketListenerImpl listener) implements ICustomConfigurationTask {
+    public static final Identifier ID = Identifier.fromNamespaceAndPath(fuzs.multiloaderdataextensions.common.impl.MultiloaderDataExtensions.MOD_ID, "registry_data_map_negotiation");
+    public static final Type TYPE = new Type(ID.toString());
+
+    @Override
+    public Type type() {
+        return TYPE;
+    }
+
+    @Override
+    public void run(Consumer<CustomPacketPayload> sender) {
+        if (!net.fabricmc.fabric.api.networking.v1.ServerConfigurationNetworking.canSend(listener, KnownRegistryDataMapsPayload.TYPE)) {
+            final var mandatory = RegistryManager.getDataMaps().values()
+                    .stream()
+                    .flatMap(map -> map.values().stream())
+                    .filter(DataMapType::mandatorySync)
+                    .map(type -> type.id() + " (" + type.registryKey().identifier() + ")")
+                    .toList();
+            if (!mandatory.isEmpty()) {
+                // Use plain components as vanilla connections will be missing our translation keys
+                listener.disconnect(Component.literal("This server does not support vanilla clients as it has mandatory registry data maps: ")
+                        .append(Component.literal(String.join(", ", mandatory)).withStyle(ChatFormatting.GOLD)));
+            } else {
+                listener.completeTask(TYPE);
+            }
+
+            return;
+        }
+
+        final Map<ResourceKey<? extends Registry<?>>, List<KnownRegistryDataMapsPayload.KnownDataMap>> dataMaps = new HashMap<>();
+        RegistryManager.getDataMaps().forEach((key, attach) -> {
+            final List<KnownRegistryDataMapsPayload.KnownDataMap> list = new ArrayList<>();
+            attach.forEach((id, val) -> {
+                if (val.networkCodec() != null) {
+                    list.add(new KnownRegistryDataMapsPayload.KnownDataMap(id, val.mandatorySync()));
+                }
+            });
+            dataMaps.put(key, list);
+        });
+        sender.accept(new KnownRegistryDataMapsPayload(dataMaps));
+    }
+}
