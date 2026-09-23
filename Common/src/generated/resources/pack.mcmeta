@@ -1,6 +1,6 @@
 {
   "pack": {
-    "description": "Support for NeoForge's data maps and tag removals on other mod loaders.",
+    "description": "Data maps for everyone: NeoForge's data-driven registry values on Fabric.",
     "max_format": 121,
     "min_format": 121
   }
