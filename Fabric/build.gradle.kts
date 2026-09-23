@@ -1,5 +1,8 @@
-import neoforgesync.CheckNeoForgeSourcesTask
-import neoforgesync.SyncNeoForgeSourcesTask
+import fuzs.multiloader.extension.mod
+import fuzs.multiloader.extension.packageName
+import fuzs.multiloader.vendoredsources.CheckVendoredSourcesTask
+import fuzs.multiloader.vendoredsources.SourceSpec
+import fuzs.multiloader.vendoredsources.SyncVendoredSourcesTask
 import org.gradle.api.artifacts.VersionCatalogsExtension
 
 plugins {
@@ -36,7 +39,8 @@ val neoforgeSourceVersion: String = extensions.getByType<VersionCatalogsExtensio
     .get()
     .requiredVersion
 
-val vendoredPackagePrefix = "fuzs.multiloaderdataextensions.fabric.impl.neoforge"
+// Relocation target for the vendored NeoForge sources, derived from the mod group instead of hardcoded.
+val vendoredPackagePrefix = "${mod.group}.${packageName}.impl.neoforge"
 
 repositories {
     maven("https://maven.neoforged.net/releases/") {
@@ -47,46 +51,54 @@ repositories {
     }
 }
 
-val neoforgeSources by configurations.creating {
+val neoforgeSources = configurations.create("neoforgeSources") {
     isCanBeConsumed = false
     isCanBeResolved = true
     isTransitive = false
 }
 
 dependencies {
-    neoforgeSources("net.neoforged:neoforge:$neoforgeSourceVersion:sources")
+    add(neoforgeSources.name, "net.neoforged:neoforge:$neoforgeSourceVersion:sources")
 }
 
-val syncNeoForgeSources = tasks.register<SyncNeoForgeSourcesTask>("syncNeoForgeSources") {
-    group = "neoforge sync"
-    description = "Regenerates the vendored NeoForge sources from upstream plus the committed patches."
-
-    manifestFile.set(layout.projectDirectory.file("neoforge-sync.manifest"))
-    patchesDir.set(layout.projectDirectory.dir("neoforge-patches"))
-    packagePrefix.set(vendoredPackagePrefix)
-    neoforgeVersion.set(neoforgeSourceVersion)
-    committedDir.set(layout.projectDirectory.dir("src/main/java/${vendoredPackagePrefix.replace('.', '/')}"))
-    workDir.set(layout.buildDirectory.dir("neoforge-sync"))
-    lockFile.set(layout.projectDirectory.file("neoforge-sync.lock"))
-    upstreamSources.from(neoforgeSources)
+val vendoredSources = provider {
+    listOf(
+        SourceSpec(
+            name = "neoforge",
+            version = neoforgeSourceVersion,
+            packageRoot = "net.neoforged.neoforge",
+            relocateTo = vendoredPackagePrefix,
+            sourcesJar = neoforgeSources.singleFile,
+        )
+    )
 }
 
-val checkNeoForgeSources = tasks.register<CheckNeoForgeSourcesTask>("checkNeoForgeSources") {
-    group = "neoforge sync"
-    description = "Verifies the vendored NeoForge sources match upstream plus the committed patches."
+val syncVendoredSources = tasks.register<SyncVendoredSourcesTask>("syncVendoredSources") {
+    group = "vendored sources"
+    description = "Regenerates the vendored upstream sources from the committed patches."
 
-    manifestFile.set(layout.projectDirectory.file("neoforge-sync.manifest"))
-    patchesDir.set(layout.projectDirectory.dir("neoforge-patches"))
-    packagePrefix.set(vendoredPackagePrefix)
-    neoforgeVersion.set(neoforgeSourceVersion)
-    committedDir.set(layout.projectDirectory.dir("src/main/java/${vendoredPackagePrefix.replace('.', '/')}"))
-    workDir.set(layout.buildDirectory.dir("neoforge-sync-check"))
-    lockFile.set(layout.projectDirectory.file("neoforge-sync.lock"))
-    upstreamSources.from(neoforgeSources)
+    manifestFile.set(layout.projectDirectory.file("patches/manifest"))
+    patchesDir.set(layout.projectDirectory.dir("patches"))
+    outputDir.set(layout.projectDirectory.dir("src/main/java"))
+    workDir.set(layout.buildDirectory.dir("vendored-sources"))
+    lockFile.set(layout.projectDirectory.file("patches/lock"))
+    sources.set(vendoredSources)
+}
+
+val checkVendoredSources = tasks.register<CheckVendoredSourcesTask>("checkVendoredSources") {
+    group = "vendored sources"
+    description = "Verifies the vendored upstream sources match upstream plus the committed patches."
+
+    manifestFile.set(layout.projectDirectory.file("patches/manifest"))
+    patchesDir.set(layout.projectDirectory.dir("patches"))
+    committedDir.set(layout.projectDirectory.dir("src/main/java"))
+    workDir.set(layout.buildDirectory.dir("vendored-sources-check"))
+    lockFile.set(layout.projectDirectory.file("patches/lock"))
+    sources.set(vendoredSources)
 }
 
 tasks.named("check") {
-    dependsOn(checkNeoForgeSources)
+    dependsOn(checkVendoredSources)
 }
 
 // Generated files must not be reformatted, otherwise the checked-in sources diverge from a fresh sync.

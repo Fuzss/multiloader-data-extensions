@@ -1,5 +1,5 @@
---- a/common/extensions/TypedInstanceExtension.java
-+++ b/common/extensions/TypedInstanceExtension.java
+--- a/net/neoforged/neoforge/common/extensions/TypedInstanceExtension.java
++++ b/net/neoforged/neoforge/common/extensions/TypedInstanceExtension.java
 @@ -13,8 +13,8 @@
  public interface TypedInstanceExtension<T> extends IWithData<T> {
      @Nullable

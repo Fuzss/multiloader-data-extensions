@@ -1,5 +1,5 @@
---- a/network/payload/KnownRegistryDataMapsPayload.java
-+++ b/network/payload/KnownRegistryDataMapsPayload.java
+--- a/net/neoforged/neoforge/network/payload/KnownRegistryDataMapsPayload.java
++++ b/net/neoforged/neoforge/network/payload/KnownRegistryDataMapsPayload.java
 @@ -20,7 +20,7 @@
  
  @ApiStatus.Internal

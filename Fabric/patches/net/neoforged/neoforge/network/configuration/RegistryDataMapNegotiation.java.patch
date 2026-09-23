@@ -1,5 +1,5 @@
---- a/network/configuration/RegistryDataMapNegotiation.java
-+++ b/network/configuration/RegistryDataMapNegotiation.java
+--- a/net/neoforged/neoforge/network/configuration/RegistryDataMapNegotiation.java
++++ b/net/neoforged/neoforge/network/configuration/RegistryDataMapNegotiation.java
 @@ -14,7 +14,6 @@
  import net.minecraft.core.Registry;
  import net.minecraft.network.chat.Component;

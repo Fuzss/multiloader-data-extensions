@@ -1,5 +1,5 @@
---- a/network/payload/KnownRegistryDataMapsReplyPayload.java
-+++ b/network/payload/KnownRegistryDataMapsReplyPayload.java
+--- a/net/neoforged/neoforge/network/payload/KnownRegistryDataMapsReplyPayload.java
++++ b/net/neoforged/neoforge/network/payload/KnownRegistryDataMapsReplyPayload.java
 @@ -22,7 +22,7 @@
  @ApiStatus.Internal
  public record KnownRegistryDataMapsReplyPayload(

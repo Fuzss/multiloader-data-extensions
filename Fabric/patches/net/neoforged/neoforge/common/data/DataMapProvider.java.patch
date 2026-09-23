@@ -1,5 +1,5 @@
---- a/common/data/DataMapProvider.java
-+++ b/common/data/DataMapProvider.java
+--- a/net/neoforged/neoforge/common/data/DataMapProvider.java
++++ b/net/neoforged/neoforge/common/data/DataMapProvider.java
 @@ -28,9 +28,6 @@
  import net.minecraft.resources.Identifier;
  import net.minecraft.resources.ResourceKey;

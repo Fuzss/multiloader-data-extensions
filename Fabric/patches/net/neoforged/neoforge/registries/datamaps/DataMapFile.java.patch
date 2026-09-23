@@ -1,5 +1,5 @@
---- a/registries/datamaps/DataMapFile.java
-+++ b/registries/datamaps/DataMapFile.java
+--- a/net/neoforged/neoforge/registries/datamaps/DataMapFile.java
++++ b/net/neoforged/neoforge/registries/datamaps/DataMapFile.java
 @@ -15,13 +15,11 @@
  import net.minecraft.resources.ResourceKey;
  import net.minecraft.tags.TagKey;

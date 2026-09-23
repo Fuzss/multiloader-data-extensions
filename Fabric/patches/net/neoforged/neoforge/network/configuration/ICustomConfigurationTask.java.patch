@@ -1,5 +1,5 @@
---- a/network/configuration/ICustomConfigurationTask.java
-+++ b/network/configuration/ICustomConfigurationTask.java
+--- a/net/neoforged/neoforge/network/configuration/ICustomConfigurationTask.java
++++ b/net/neoforged/neoforge/network/configuration/ICustomConfigurationTask.java
 @@ -41,6 +41,6 @@
      @ApiStatus.Internal
      @ApiStatus.NonExtendable

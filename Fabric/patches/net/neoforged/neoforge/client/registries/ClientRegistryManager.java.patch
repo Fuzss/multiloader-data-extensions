@@ -1,5 +1,5 @@
---- a/client/registries/ClientRegistryManager.java
-+++ b/client/registries/ClientRegistryManager.java
+--- a/net/neoforged/neoforge/client/registries/ClientRegistryManager.java
++++ b/net/neoforged/neoforge/client/registries/ClientRegistryManager.java
 @@ -22,14 +22,10 @@
  import net.minecraft.network.chat.MutableComponent;
  import net.minecraft.resources.Identifier;

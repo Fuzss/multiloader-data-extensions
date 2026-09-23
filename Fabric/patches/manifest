@@ -1,0 +1,30 @@
+# Vendored upstream source manifest.
+#
+# Format:
+#   generated <source> <path>   fetched, patched (patches/<path>.patch when present), relocated, written
+#   owned     <source> <path>   hand-maintained; upstream only fetched to report drift
+#   local     <path>            hand-maintained; no upstream counterpart
+#
+# <path> is the full package path of the upstream file, mirrored under patches/.
+
+generated neoforge net/neoforged/neoforge/common/extensions/TypedInstanceExtension.java
+generated neoforge net/neoforged/neoforge/registries/datamaps/IWithData.java
+generated neoforge net/neoforged/neoforge/registries/datamaps/DataMapEntry.java
+generated neoforge net/neoforged/neoforge/registries/datamaps/DataMapValueRemover.java
+generated neoforge net/neoforged/neoforge/registries/datamaps/DataMapValueMerger.java
+generated neoforge net/neoforged/neoforge/registries/datamaps/DataMapFile.java
+generated neoforge net/neoforged/neoforge/registries/datamaps/DataMapType.java
+generated neoforge net/neoforged/neoforge/registries/datamaps/AdvancedDataMapType.java
+generated neoforge net/neoforged/neoforge/common/util/NeoForgeExtraCodecs.java
+generated neoforge net/neoforged/neoforge/network/payload/KnownRegistryDataMapsPayload.java
+generated neoforge net/neoforged/neoforge/network/payload/KnownRegistryDataMapsReplyPayload.java
+generated neoforge net/neoforged/neoforge/network/payload/RegistryDataMapSyncPayload.java
+generated neoforge net/neoforged/neoforge/network/configuration/ICustomConfigurationTask.java
+generated neoforge net/neoforged/neoforge/network/configuration/RegistryDataMapNegotiation.java
+generated neoforge net/neoforged/neoforge/client/registries/ClientRegistryManager.java
+generated neoforge net/neoforged/neoforge/registries/DataMapLoader.java
+generated neoforge net/neoforged/neoforge/common/data/DataMapProvider.java
+owned neoforge net/neoforged/neoforge/network/codec/NeoForgeStreamCodecs.java
+owned neoforge net/neoforged/neoforge/resource/ContextAwareReloadListener.java
+owned neoforge net/neoforged/neoforge/registries/RegistryManager.java
+owned neoforge net/neoforged/neoforge/registries/IRegistryExtension.java

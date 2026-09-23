@@ -1,5 +1,5 @@
---- a/registries/DataMapLoader.java
-+++ b/registries/DataMapLoader.java
+--- a/net/neoforged/neoforge/registries/DataMapLoader.java
++++ b/net/neoforged/neoforge/registries/DataMapLoader.java
 @@ -30,12 +30,10 @@
  import net.minecraft.tags.TagKey;
  import net.minecraft.util.profiling.Profiler;

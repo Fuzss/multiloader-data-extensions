@@ -1,5 +1,5 @@
---- a/network/payload/RegistryDataMapSyncPayload.java
-+++ b/network/payload/RegistryDataMapSyncPayload.java
+--- a/net/neoforged/neoforge/network/payload/RegistryDataMapSyncPayload.java
++++ b/net/neoforged/neoforge/network/payload/RegistryDataMapSyncPayload.java
 @@ -29,26 +29,26 @@
  @SuppressWarnings({ "unchecked", "rawtypes" })
  public record RegistryDataMapSyncPayload<T>(ResourceKey<? extends Registry<T>> registryKey,

@@ -1,12 +1,10 @@
-package neoforgesync
+package fuzs.multiloader.vendoredsources
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
-import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Internal
@@ -18,7 +16,19 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import javax.inject.Inject
 
-abstract class SyncNeoForgeSourcesTask : DefaultTask() {
+private fun generator(execOps: ExecOperations): VendoredSourcesGenerator = VendoredSourcesGenerator { dir, command ->
+    val output = ByteArrayOutputStream()
+    val exit = execOps.exec {
+        commandLine(command)
+        workingDir = dir
+        isIgnoreExitValue = true
+        standardOutput = output
+        errorOutput = output
+    }.exitValue
+    ExecOutcome(exit, output.toString(Charsets.UTF_8))
+}
+
+abstract class SyncVendoredSourcesTask : DefaultTask() {
     @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val manifestFile: RegularFileProperty
@@ -27,14 +37,8 @@ abstract class SyncNeoForgeSourcesTask : DefaultTask() {
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val patchesDir: DirectoryProperty
 
-    @get:Input
-    abstract val packagePrefix: Property<String>
-
-    @get:Input
-    abstract val neoforgeVersion: Property<String>
-
     @get:Internal
-    abstract val committedDir: DirectoryProperty
+    abstract val outputDir: DirectoryProperty
 
     @get:Internal
     abstract val workDir: DirectoryProperty
@@ -43,41 +47,48 @@ abstract class SyncNeoForgeSourcesTask : DefaultTask() {
     abstract val lockFile: RegularFileProperty
 
     @get:Internal
-    abstract val upstreamSources: ConfigurableFileCollection
+    abstract val sources: ListProperty<SourceSpec>
 
     @get:Inject
     abstract val execOps: ExecOperations
 
     @TaskAction
     fun sync() {
-        val previous = NeoForgeLock.ownedHashes(NeoForgeLock.read(lockFile.get().asFile))
+        val sourceSpecs = sources.get()
+        val lock = lockFile.get().asFile
+        val previousOwned = VendoredSourcesLock.ownedHashes(VendoredSourcesLock.read(lock))
         val reportDir = File(workDir.get().asFile, "owned-upstream")
-        val sourcesJar = sourcesJar()
-        val version = neoforgeVersion.get()
-        logger.lifecycle("NeoForge sources $version (${sourcesJar.name})")
+        logger.lifecycle("Vendored sources: ${sourceSpecs.joinToString(", ") { "${it.name}@${it.version}" }}")
 
-        val result = generator().generate(
+        val result = generator(execOps).generate(
             manifestFile.get().asFile,
             patchesDir.get().asFile,
-            committedDir.get().asFile,
+            outputDir.get().asFile,
             workDir.get().asFile,
-            sourcesJar,
-            packagePrefix.get(),
+            sourceSpecs,
             reportDir = reportDir,
         )
 
         val changed = result.ownedHashes
-            .filter { (path, hash) -> previous[path] != null && previous[path] != hash }
+            .filter { (path, hash) -> previousOwned[path] != null && previousOwned[path] != hash }
             .keys
 
-        val width = result.outcomes.maxOfOrNull { it.path.length } ?: 0
+        val pathWidth = result.outcomes.maxOfOrNull { it.path.length } ?: 0
+        val sourceWidth = result.outcomes.mapNotNull { it.source?.length }.maxOrNull() ?: 0
         for (outcome in result.outcomes) {
             val tag = when (outcome.mode) {
                 SyncMode.GENERATED -> if (outcome.patched) "[patched]" else "[verbatim]"
                 SyncMode.OWNED -> if (outcome.path in changed) "[changed]" else "[unchanged]"
                 SyncMode.LOCAL -> "[local]"
             }
-            logger.lifecycle("  %-9s %s %s".format(outcome.mode.name.lowercase(), outcome.path.padEnd(width), tag))
+            logger.lifecycle(
+                "  %-9s %s %s %s".format(
+                    outcome.mode.name.lowercase(),
+                    (outcome.source ?: "-").padEnd(sourceWidth),
+                    outcome.path.padEnd(pathWidth),
+                    tag,
+                )
+            )
             if (outcome.patchOutput.isNotBlank()) {
                 outcome.patchOutput.trim().lines().forEach { logger.info("      $it") }
             }
@@ -94,32 +105,12 @@ abstract class SyncNeoForgeSourcesTask : DefaultTask() {
             changed.sorted().forEach { path -> logger.warn("  - $path (see ${File(reportDir, path)})") }
         }
 
-        NeoForgeLock.write(lockFile.get().asFile, version, result.ownedHashes)
-        logger.lifecycle("NeoForge sources synced from version $version.")
-    }
-
-    private fun generator(): NeoForgeSourcesGenerator = NeoForgeSourcesGenerator { dir, command ->
-        val output = ByteArrayOutputStream()
-        val exit = execOps.exec {
-            commandLine(command)
-            workingDir = dir
-            isIgnoreExitValue = true
-            standardOutput = output
-            errorOutput = output
-        }.exitValue
-        ExecOutcome(exit, output.toString(Charsets.UTF_8))
-    }
-
-    private fun sourcesJar(): File {
-        val jars = upstreamSources.files
-        if (jars.size != 1) {
-            throw GradleException("Expected exactly one NeoForge sources artifact but found: $jars")
-        }
-        return jars.single()
+        VendoredSourcesLock.write(lock, sourceSpecs.associate { it.name to it.version }, result.ownedHashes)
+        logger.lifecycle("Vendored sources synced.")
     }
 }
 
-abstract class CheckNeoForgeSourcesTask : DefaultTask() {
+abstract class CheckVendoredSourcesTask : DefaultTask() {
     @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val manifestFile: RegularFileProperty
@@ -127,12 +118,6 @@ abstract class CheckNeoForgeSourcesTask : DefaultTask() {
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val patchesDir: DirectoryProperty
-
-    @get:Input
-    abstract val packagePrefix: Property<String>
-
-    @get:Input
-    abstract val neoforgeVersion: Property<String>
 
     @get:Internal
     abstract val committedDir: DirectoryProperty
@@ -144,60 +129,55 @@ abstract class CheckNeoForgeSourcesTask : DefaultTask() {
     abstract val lockFile: RegularFileProperty
 
     @get:Internal
-    abstract val upstreamSources: ConfigurableFileCollection
+    abstract val sources: ListProperty<SourceSpec>
 
     @get:Inject
     abstract val execOps: ExecOperations
 
     @TaskAction
     fun check() {
+        val sourceSpecs = sources.get()
+        val sourcesByName = sourceSpecs.associateBy { it.name }
         val work = workDir.get().asFile
         work.deleteRecursively()
-        val outputDir = File(work, "output")
+        val generatedDir = File(work, "output")
         val reportDir = File(work, "owned-upstream")
 
-        val result = NeoForgeSourcesGenerator { dir, command ->
-            val output = ByteArrayOutputStream()
-            val exit = execOps.exec {
-                commandLine(command)
-                workingDir = dir
-                isIgnoreExitValue = true
-                standardOutput = output
-                errorOutput = output
-            }.exitValue
-            ExecOutcome(exit, output.toString(Charsets.UTF_8))
-        }.generate(
+        val result = generator(execOps).generate(
             manifestFile.get().asFile,
             patchesDir.get().asFile,
-            outputDir,
+            generatedDir,
             File(work, "work"),
-            upstreamSources.files.single(),
-            packagePrefix.get(),
-            reportDir,
+            sourceSpecs,
+            reportDir = reportDir,
         )
 
         val problems = mutableListOf<String>()
 
-        for (entry in NeoForgeSourcesSync.parseManifest(manifestFile.get().asFile)) {
+        for (entry in VendoredSources.parseManifest(manifestFile.get().asFile)) {
             if (entry.mode != SyncMode.GENERATED) continue
-            val produced = File(outputDir, entry.path)
-            val committed = File(committedDir.get().asFile, entry.path)
+            val source = sourcesByName.getValue(requireNotNull(entry.source) { "Missing source for ${entry.path}" })
+            val rel = source.outputPath(entry.path)
+            val produced = File(generatedDir, rel)
+            val committed = File(committedDir.get().asFile, rel)
             if (!committed.isFile || produced.readText() != committed.readText()) {
                 problems += "generated source is out of date: ${entry.path}"
             }
         }
 
-        val lock = NeoForgeLock.read(lockFile.get().asFile)
+        val lock = VendoredSourcesLock.read(lockFile.get().asFile)
         if (lock.isEmpty()) {
             problems += "lock file '${lockFile.get().asFile}' is missing"
         } else {
-            val lockedVersion = NeoForgeLock.version(lock)
-            if (lockedVersion != neoforgeVersion.get()) {
-                problems += "lock file targets NeoForge $lockedVersion but ${neoforgeVersion.get()} is configured"
+            val lockedVersions = VendoredSourcesLock.versions(lock)
+            sourceSpecs.forEach { source ->
+                val locked = lockedVersions[source.name]
+                if (locked != source.version) {
+                    problems += "lock file targets ${source.name} $locked but ${source.version} is configured"
+                }
             }
-            NeoForgeLock.ownedHashes(lock).forEach { (path, hash) ->
-                val current = result.ownedHashes[path]
-                if (current != hash) {
+            VendoredSourcesLock.ownedHashes(lock).forEach { (path, hash) ->
+                if (result.ownedHashes[path] != hash) {
                     problems += "owned source changed upstream: $path (review ${File(reportDir, path)})"
                 }
             }
@@ -209,13 +189,13 @@ abstract class CheckNeoForgeSourcesTask : DefaultTask() {
         if (problems.isNotEmpty()) {
             throw GradleException(
                 buildString {
-                    appendLine("NeoForge sources are out of sync:")
+                    appendLine("Vendored sources are out of sync:")
                     problems.forEach { appendLine("  - $it") }
                     appendLine()
-                    appendLine("Run './gradlew :Fabric:syncNeoForgeSources' and review the result.")
+                    appendLine("Run the 'syncVendoredSources' task and review the result.")
                 }
             )
         }
-        logger.lifecycle("NeoForge sources are in sync with version ${neoforgeVersion.get()}.")
+        logger.lifecycle("Vendored sources are in sync.")
     }
 }
