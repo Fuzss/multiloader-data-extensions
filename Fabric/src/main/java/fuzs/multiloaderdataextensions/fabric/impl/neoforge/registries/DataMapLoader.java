@@ -74,6 +74,7 @@ public class DataMapLoader extends ContextAwareReloadListener {
             }
 
             entry.values().forEach((tKey, value) -> {
+
                 resolve(registry, tKey, true, holder -> {
                     final var newValue = value;
                     final var key = holder.unwrapKey().orElse(null);
