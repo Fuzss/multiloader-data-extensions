@@ -34,6 +34,7 @@ import fuzs.multiloaderdataextensions.fabric.neoforge.registries.datamaps.DataMa
 import fuzs.multiloaderdataextensions.fabric.neoforge.registries.datamaps.DataMapFile;
 import fuzs.multiloaderdataextensions.fabric.neoforge.registries.datamaps.DataMapType;
 import fuzs.multiloaderdataextensions.fabric.neoforge.registries.datamaps.DataMapValueRemover;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A provider for {@link DataMapType data map} generation.
@@ -105,12 +106,15 @@ public abstract class DataMapProvider implements DataProvider {
         protected final List<DataMapEntry.Removal<T, R>> removals = new ArrayList<>();
         protected final ResourceKey<Registry<R>> registryKey;
         private final DataMapType<R, T> type;
+        @Nullable
+        private final String noTagsReason;
 
         private boolean replace;
 
         public Builder(DataMapType<R, T> type) {
             this.type = type;
             this.registryKey = type.registryKey();
+            this.noTagsReason = type instanceof AdvancedDataMapType<R, T, ?> adv && !adv.supportsTags() ? adv.getNoTagsReason() : null;
         }
 
         public Builder<T, R> add(ResourceKey<R> key, T value, boolean replace) {
@@ -127,6 +131,9 @@ public abstract class DataMapProvider implements DataProvider {
         }
 
         public Builder<T, R> add(TagKey<R> tag, T value, boolean replace) {
+            if (noTagsReason != null) {
+                throw new IllegalArgumentException("DataMapType " + type.id() + " does not support tags: " + noTagsReason);
+            }
             this.values.put(Either.left(tag), new DataMapEntry<>(value, replace));
             return this;
         }
